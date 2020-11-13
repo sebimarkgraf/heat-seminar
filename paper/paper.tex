@@ -1,0 +1,44 @@
+% This template has been tested with IEEEtran of 2015.
+
+% !TeX spellcheck = en-US
+% !TeX encoding = utf8
+% !TeX program = pdflatex
+% !TeX TXS-program:compile = txs:///pdflatex/[--shell-escape]
+% !BIB program = bibtex
+% -*- coding:utf-8 mod:LaTeX -*-
+
+%cmap has to be loaded before any font package (such as newtxmath)
+\RequirePackage{cmap}
+
+% DO NOT DOWNLOAD IEEEtran.cls - Use the one of your LaTeX distribution
+\documentclass[conference]{IEEEtran}[2015/08/26]
+
+\input{includes/preamble}
+\input{includes/glossary-definitions}
+\input{includes/math}
+\input{includes/commands}
+
+
+\begin{document}
+\input{sections/00-title}
+
+\input{sections/00-abstract}
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+\input{sections/01-introduction}
+\input{sections/02-fundamentals}
+
+
+
+\input{sections/98-acknowledgement}
+\input{sections/99-bibliography}
+\end{document}

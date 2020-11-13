@@ -1,0 +1,20 @@
+% Bild Standard
+\newcommand{\bild}[3]{%
+  \begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.48\textwidth]{#1}
+    \caption{#2}
+    \label{#3}
+  \end{figure}
+}
+
+
+\newcommand{\keyword}[1]{%
+  #1\xspace
+}
+\newcommand{\keepident}[1]{%
+  \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{#1\strut}
+}
+\newcommand{\page}[1]{%
+ \textit{S.#1}\xspace
+}

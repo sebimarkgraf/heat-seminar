@@ -1,0 +1,23 @@
+
+In the bibliography, use \texttt{\textbackslash textsuperscript} for ``st'', ``nd'', \ldots:
+E.g., \enquote{The 2\textsuperscript{nd} conference on examples}.
+When you use \href{https://www.jabref.org}{JabRef}, you can use the clean up command to achieve that.
+See \url{https://help.jabref.org/en/CleanupEntries} for an overview of the cleanup functionality.
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% Enable to reduce spacing between bibitems (source: https://tex.stackexchange.com/a/25774)
+% \def\IEEEbibitemsep{0pt plus .5pt}
+
+\bibliographystyle{IEEEtranN} % IEEEtranN is the natbib compatible bst file
+% argument is your BibTeX string definitions and bibliography database(s)
+\bibliography{paper}
+
+\ \\ % empty line after bibliogpraphy and that statement
+All links were followed on April 18, 2018.

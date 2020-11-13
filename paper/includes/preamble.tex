@@ -1,0 +1,202 @@
+
+% use nicer font for code
+\usepackage[zerostyle=b,scaled=.75]{newtxtt}
+
+% for demonstration purposes
+\usepackage{mwe}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} %support umlauts in the input
+
+\usepackage{amsmath}
+
+\usepackage{graphicx}
+
+%Set English as language and allow to write hyphenated"=words
+\usepackage[ngerman,main=english]{babel}
+%Hint by http://tex.stackexchange.com/a/321066/9075 -> enable "= as dashes
+\addto\extrasenglish{\languageshorthands{ngerman}\useshorthands{"}}
+
+% backticks (`) are rendered as such in verbatim environment. See https://tex.stackexchange.com/a/341057/9075 for details.
+\usepackage{upquote}
+
+%extended enumerate, such as \begin{compactenum}
+\usepackage{paralist}
+
+%for easy quotations: \enquote{text}
+\usepackage{csquotes}
+
+%enable margin kerning
+\RequirePackage{iftex}
+\ifPDFTeX
+  \RequirePackage[%
+    final,%
+    expansion=alltext,%
+    protrusion=alltext-nott]{microtype}%
+\else
+  \RequirePackage[%
+    final,%
+    protrusion=alltext-nott]{microtype}%
+\fi%
+% \texttt{test -- test} keeps the "--" as "--" (and does not convert it to an en dash)
+\DisableLigatures{encoding = T1, family = tt* }
+
+%tweak \url{...}
+\usepackage{url}
+%\urlstyle{same}
+%improve wrapping of URLs - hint by http://tex.stackexchange.com/a/10419/9075
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+%nicer // - solution by http://tex.stackexchange.com/a/98470/9075
+%DO NOT ACTIVATE -> prevents line breaks
+%\makeatletter
+%\def\Url@twoslashes{\mathchar`\/\@ifnextchar/{\kern-.2em}{}}
+%\g@addto@macro\UrlSpecials{\do\/{\Url@twoslashes}}
+%\makeatother
+
+% Diagonal lines in a table - http://tex.stackexchange.com/questions/17745/diagonal-lines-in-table-cell
+% Slashbox is not available in texlive (due to licensing) and also gives bad results. This, we use diagbox
+%\usepackage{diagbox}
+
+\usepackage{booktabs}
+
+% Required for package pdfcomment later
+\usepackage{xcolor}
+
+% For listings
+\usepackage{listings}
+\lstset{%
+  basicstyle=\ttfamily,%
+  columns=fixed,%
+  basewidth=.5em,%
+  xleftmargin=0.5cm,%
+  captionpos=b}%
+% Fix counter as described at https://tex.stackexchange.com/a/28334/9075
+\usepackage{chngcntr}
+\AtBeginDocument{\counterwithout{lstlisting}{section}}
+
+% Compatibility of packages minted and listings with respect to the numbering of "Listing" caption
+% Source: https://tex.stackexchange.com/a/269510/9075
+\AtBeginEnvironment{listing}{\setcounter{listing}{\value{lstlisting}}}
+\AtEndEnvironment{listing}{\stepcounter{lstlisting}}
+
+% Enable nice comments
+\usepackage{pdfcomment}
+%
+\newcommand{\commentontext}[2]{\colorbox{yellow!60}{#1}\pdfcomment[color={0.234 0.867 0.211},hoffset=-6pt,voffset=10pt,opacity=0.5]{#2}}
+\newcommand{\commentatside}[1]{\pdfcomment[color={0.045 0.278 0.643},icon=Note]{#1}}
+%
+% Compatibility with packages todo, easy-todo, todonotes
+\newcommand{\todo}[1]{\commentatside{#1}}
+% Compatiblity with package fixmetodonotes
+\newcommand{\TODO}[1]{\commentatside{#1}}
+
+% Bibliopgraphy enhancements
+%  - enable \cite[prenote][]{ref}
+%  - enable \cite{ref1,ref2}
+% Alternative: \usepackage{cite}, which enables \cite{ref1, ref2} only (otherwise: Error message: "White space in argument")
+%
+% Doc: http://texdoc.net/natbib
+\ifCLASSOPTIONcompsoc
+  % IEEE Computer Society needs nocompress option at cite.sty
+  % natbib includes the same functionality
+  \usepackage[%
+    square,        % for square brackets
+    comma,         % use commas as separators
+    numbers,       % for numerical citations;
+    sort           % orders multiple citations into the sequence in which they appear in the list of references;
+    %sort&compress % as sort but in addition multiple numerical citations
+                   % are compressed if possible (as 3-6, 15);
+  ]{natbib}
+\else
+  % normal IEEE
+  \usepackage[%
+    square,        % for square brackets
+    comma,         % use commas as separators
+    numbers,       % for numerical citations;
+    %sort           % orders multiple citations into the sequence in which they appear in the list of references;
+    sort&compress % as sort but in addition multiple numerical citations
+                   % are compressed if possible (as 3-6, 15);
+  ]{natbib}
+\fi
+% Same fontsize as without natbib
+\renewcommand{\bibfont}{\normalfont\footnotesize}
+% Enable hyperlinked author names in the case of \citet
+% Source: https://tex.stackexchange.com/a/76075/9075
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\NAT@test}{\else \NAT@nm}{\else \NAT@hyper@{\NAT@nm}}{}{}
+\makeatother
+
+% Enable that parameters of \cref{}, \ref{}, \cite{}, ... are linked so that a reader can click on the number an jump to the target in the document
+\usepackage{hyperref}
+% Enable hyperref without colors and without bookmarks
+\hypersetup{hidelinks,
+  colorlinks=true,
+  allcolors=black,
+  pdfstartview=Fit,
+  breaklinks=true}
+%
+% Enable correct jumping to figures when referencing
+\usepackage[all]{hypcap}
+
+%enable \cref{...} and \Cref{...} instead of \ref: Type of reference included in the link
+\usepackage[capitalise,nameinlink]{cleveref}
+\crefname{lstlisting}{\lstlistingname}{\lstlistingname}
+\Crefname{lstlisting}{Listing}{Listings}
+
+\usepackage[newfloat]{minted}
+
+% Line numbers not flowing out of the margin
+\setminted{numbersep=5pt, xleftmargin=12pt}
+
+\usemintedstyle{bw} %black and white style
+%\usemintedstyle{vs} %visual studio
+%\usemintedstyle{friendlygrayscale} % custom style - submitted as pull request https://bitbucket.org/birkenfeld/pygments-main/pull-requests/748/add-style-friendly-grayscale/diff
+%\usemintedstyle{friendly}
+%\usemintedstyle{eclipse} %http://www.jevon.org/wiki/Eclipse_Pygments_Style
+%\usemintedstyle{autumn}
+%\usemintedstyle{rrt}
+%\usemintedstyle{borland}
+
+% We need to load caption to have a bold font on the label
+% The other parameters mimic the layout of the LNCS class
+\usepackage[labelfont=bf,font=small,skip=4pt]{caption}
+\SetupFloatingEnvironment{listing}{name=Listing,within=none}
+%
+%Intermediate solution for hyperlinked refs. See https://tex.stackexchange.com/q/132420/9075 for more information.
+\newcommand{\Vlabel}[1]{\label[line]{#1}\hypertarget{#1}{}}
+\newcommand{\lref}[1]{\hyperlink{#1}{\FancyVerbLineautorefname~\ref*{#1}}}
+
+\usepackage{xspace}
+%\newcommand{\eg}{e.\,g.\xspace}
+%\newcommand{\ie}{i.\,e.\xspace}
+\newcommand{\eg}{e.\,g.,\ }
+\newcommand{\ie}{i.\,e.,\ }
+
+%introduce \powerset - hint by http://matheplanet.com/matheplanet/nuke/html/viewtopic.php?topic=136492&post_id=997377
+\DeclareFontFamily{U}{MnSymbolC}{}
+\DeclareSymbolFont{MnSyC}{U}{MnSymbolC}{m}{n}
+\DeclareFontShape{U}{MnSymbolC}{m}{n}{
+  <-6>    MnSymbolC5
+  <6-7>   MnSymbolC6
+  <7-8>   MnSymbolC7
+  <8-9>   MnSymbolC8
+  <9-10>  MnSymbolC9
+  <10-12> MnSymbolC10
+  <12->   MnSymbolC12%
+}{}
+\DeclareMathSymbol{\powerset}{\mathord}{MnSyC}{180}
+
+% *** SUBFIGURE PACKAGES ***
+\ifCLASSOPTIONcompsoc
+  \usepackage[caption=false,font=footnotesize,labelfont=sf,textfont=sf]{subfig}
+\else
+  \usepackage[caption=false,font=footnotesize]{subfig}
+\fi
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\usepackage{glossaries}

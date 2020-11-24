@@ -6,78 +6,88 @@ import os
 import time
 from sklearn import metrics
 import numpy as np
+from functools import wraps
+import wandb
+from typing import Tuple
 
-
-NUM_CLUSTERS = 17
-DATASET = 'sen2'
-PLOT_DIR = './plots'
-SUBSET='validation'
-
-TIMESTAMP = time.time()
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
+size = comm.Get_size()
+
+default_config = {
+    'n_clusters': 17,
+    'dataset': 'sen1',
+    'subset': 'validation'
+}
+
+TIMESTAMP = time.time()
+
+
+def only_root(func):
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        response = None
+        if (MPI.COMM_WORLD.Get_rank() == 0):
+            response = func(*args, **kwargs)
+        return response
+    return wrapped    
+
 
 ht.random.seed(1234)
 
-def print_root(*values: object):
-    if rank == 0:
-        print(*values)
-
-def load_dataset(subset: str, dataset: str):
+def load_dataset(subset: str, dataset: str) -> ht.dndarray:
     path = f"./data/{subset}.h5"
     return ht.load(path, dataset=dataset, split=0)
 
+def load_data(subset, dataset):
+    # Load dataset from hdf5 file
+    dataset = load_dataset(subset=subset, dataset=dataset)[:1000]
+    labels = load_dataset(subset=subset, dataset="label")[:1000]
+    dataset.balance_()
+    labels.balance_()
+    return dataset, labels
 
-def take_subset(data: ht.dndarray, num_items=1000):
-    new_data = data[0:num_items]
-    new_data.balance_()
-    return new_data
+def normalize(dataset):
+    channel_mean = ht.mean(dataset, axis=(0, 1, 2))
+    channel_std = ht.std(dataset, axis=(0, 1, 2))
+    return (dataset - channel_mean) / channel_std
+    
 
-print("Loading Dataset")
-# Load dataset from hdf5 file
-dataset = take_subset(load_dataset(subset=SUBSET, dataset=DATASET))
-labels = take_subset(load_dataset(subset=SUBSET, dataset="label"))
-print("Done")
+def flatten(dataset, labels):
+    dataset = ht.reshape(dataset, (dataset.shape[0], dataset.shape[1] * dataset.shape[2] * dataset.shape[3]))
+    labels = ht.argmax(labels, axis=1)
+    labels = ht.resplit(labels, axis=None).numpy()
 
-print("Z-Score Normalization")
-channel_mean = ht.mean(dataset, axis=(0, 1, 2))
-channel_std = ht.std(dataset, axis=(0, 1, 2))
-print(channel_mean.numpy(), channel_std.numpy())
-dataset = (dataset - channel_mean) / channel_std
-
-# Flatten the images and channels into features
-print(f"{rank} Reshaping the features")
-print(f"{rank} {dataset.shape}")
-
-dataset = ht.reshape(dataset, (dataset.shape[0], dataset.shape[1] * dataset.shape[2] * dataset.shape[3]))
-labels = ht.argmax(labels, axis=1)
-labels = ht.resplit(labels, axis=None).numpy()
-
-print(f"{rank} New Shape: {dataset.shape}")
-print("Done")
+    return dataset, labels
 
 
-print("Clustering")
-# c = ht.cluster.KMeans(n_clusters=NUM_CLUSTERS, init="kmeans++", max_iter=1000)
-c = ht.cluster.Spectral(n_clusters=NUM_CLUSTERS, n_lanczos=300, metric='rbf')
-labels_pred = c.fit_predict(dataset).squeeze()
-labels_pred = ht.resplit(labels_pred, axis=None).numpy()
-print("Clustering done")
+def cluster(dataset: ht.dndarray, n_clusters: int) -> Tuple[ht.cluster.Spectral, np.array]:
+    # c = ht.cluster.KMeans(n_clusters=config.n_clusters, init="kmeans++", max_iter=1000)
+    c = ht.cluster.Spectral(n_clusters=n_clusters, n_lanczos=300, metric='rbf')
+    labels_pred = c.fit_predict(dataset).squeeze()
+    labels_pred = ht.resplit(labels_pred, axis=None).numpy()
 
-f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
-ax1.hist(labels_pred)
-ax1.set_title("Predicted")
-ax2.hist(labels)
-ax2.set_title("True Labels")
-if rank == 0:
-    #print(labels_sub)
-    os.makedirs(PLOT_DIR, exist_ok=True)
-    plt.savefig(f"{PLOT_DIR}/{DATASET}_{SUBSET}_{NUM_CLUSTERS}_{TIMESTAMP}_Label_Count.png")
+    return c, labels_pred
 
-def plot_cluster_composition(labels: np.array, labels_pred: np.array):
-    bins = np.max(labels)
-    n_clusters = np.max(labels_pred)
+@only_root
+def plot_label_compare(labels: np.array, labels_pred: np.array, config: dict):
+    fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+    ax1.hist(labels_pred)
+    ax1.set_title("Predicted")
+    ax2.hist(labels)
+    ax2.set_title("True Labels")
+    os.makedirs("plots", exist_ok=True)
+
+    wandb.log({"label_compare": fig})
+    plt.savefig(f"plots/{config['dataset']}_{config['subset']}_{config['n_clusters']}_{TIMESTAMP}_Label_Count.png")
+    plt.close(fig)
+
+
+@only_root
+def plot_cluster_composition(labels: np.array, labels_pred: np.array, config: dict):
+    bins = np.max(labels) + 1
+    n_clusters = np.max(labels_pred) + 1
 
     cols = 4
     rows = n_clusters // cols + 1
@@ -90,18 +100,49 @@ def plot_cluster_composition(labels: np.array, labels_pred: np.array):
         axes[i].set_title(f'Cluster {i}')
 
     fig.tight_layout()
-    plt.savefig(f"{PLOT_DIR}/{DATASET}_{SUBSET}_{NUM_CLUSTERS}_{TIMESTAMP}_Cluster_Composition.png")
+    wandb.log({"cluster_composition": fig})
+
+    os.makedirs("plots", exist_ok=True)
+    plt.savefig(f"plots/{config['dataset']}_{config['subset']}_{config['n_clusters']}_{TIMESTAMP}_Cluster_Composition.png")
     plt.close(fig)
 
-plot_cluster_composition(labels, labels_pred)
+@only_root
+def log_metrics(labels: np.array, labels_pred: np.array):
+    logged_metrics = {
+        "Adjusted Rand Index": metrics.adjusted_rand_score(labels, labels_pred),
+        "Mutual Information Score": metrics.adjusted_mutual_info_score(labels, labels_pred),
+        "V-Measure": metrics.v_measure_score(labels, labels_pred)
+    } 
+    wandb.log(logged_metrics)
+    print(logged_metrics)
+
+@only_root
+def init_wandb():
+    wandb.init(project="satellite-heat", config=default_config)
+    wandb.config['n_processes'] = size
+    return wandb.config._as_dict()
+
+
+def main():
+    config = init_wandb()
+    config = comm.bcast(config)
+
+    print("Config broadcasted", config)
+    dataset, labels = load_data(config['subset'], config['dataset'])
+    print("Data loaded")
+    dataset = normalize(dataset)
+    print("Data normalized")
+    dataset, labels = flatten(dataset, labels)
+    c, labels_pred = cluster(dataset, config['n_clusters'])
+    print("Clustering finishes")
+
+    plot_label_compare(labels, labels_pred, config)
+    plot_cluster_composition(labels, labels_pred, config)
+    log_metrics(labels, labels_pred)
+
+    print("Finished")
 
 
 
-
-def print_metrics(labels, labels_pred):
-    print(f"Adjusted Rand Index: {metrics.adjusted_rand_score(labels, labels_pred)} (1.0)")
-    print(f"Mutual Information Score: {metrics.adjusted_mutual_info_score(labels, labels_pred)} (1.0)")
-    print(f"V-measure: {metrics.v_measure_score(labels, labels_pred)} (1.0)")
-
-
-print_metrics(labels, labels_pred)
+if __name__ == "__main__":
+    main()

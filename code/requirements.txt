@@ -1,2 +1,4 @@
 sklearn
 heat[hdf5]
+wandb
+plotly

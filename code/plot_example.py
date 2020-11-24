@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 
+
 PLOT_DIR = './plots/examples'
 DATASET = 'sen1'
 EXAMPLE = 20

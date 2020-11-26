@@ -1,4 +1,5 @@
-sklearn
+scikit-learn
 heat[hdf5]
 wandb
 plotly
+matplotlib

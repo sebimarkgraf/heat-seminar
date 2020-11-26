@@ -15,11 +15,6 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-default_config = {
-    'n_clusters': 17,
-    'dataset': 'sen1',
-    'subset': 'validation'
-}
 
 TIMESTAMP = time.time()
 
@@ -36,14 +31,14 @@ def only_root(func):
 
 ht.random.seed(1234)
 
-def load_dataset(subset: str, dataset: str) -> ht.dndarray:
-    path = f"./data/{subset}.h5"
+def load_dataset(data_path: str, subset: str, dataset: str) -> ht.dndarray:
+    path = f"{data_path}{subset}.h5"
     return ht.load(path, dataset=dataset, split=0)
 
-def load_data(subset, dataset):
+def load_data(datapath: str, subset, dataset):
     # Load dataset from hdf5 file
-    dataset = load_dataset(subset=subset, dataset=dataset)[:1000]
-    labels = load_dataset(subset=subset, dataset="label")[:1000]
+    dataset = load_dataset(data_path=datapath, subset=subset, dataset=dataset)[:1000]
+    labels = load_dataset(data_path=datapath, subset=subset, dataset="label")[:1000]
     dataset.balance_()
     labels.balance_()
     return dataset, labels
@@ -62,9 +57,9 @@ def flatten(dataset, labels):
     return dataset, labels
 
 
-def cluster(dataset: ht.dndarray, n_clusters: int) -> Tuple[ht.cluster.Spectral, np.array]:
+def cluster(dataset: ht.dndarray, n_clusters: int, config: dict) -> Tuple[ht.cluster.Spectral, np.array]:
     # c = ht.cluster.KMeans(n_clusters=config.n_clusters, init="kmeans++", max_iter=1000)
-    c = ht.cluster.Spectral(n_clusters=n_clusters, n_lanczos=300, metric='rbf')
+    c = ht.cluster.Spectral(n_clusters=n_clusters, **config)
     labels_pred = c.fit_predict(dataset).squeeze()
     labels_pred = ht.resplit(labels_pred, axis=None).numpy()
 
@@ -118,7 +113,7 @@ def log_metrics(labels: np.array, labels_pred: np.array):
 
 @only_root
 def init_wandb():
-    wandb.init(project="satellite-heat", config=default_config)
+    wandb.init(project="satellite-heat")
     wandb.config['n_processes'] = size
     return wandb.config._as_dict()
 
@@ -128,12 +123,12 @@ def main():
     config = comm.bcast(config)
 
     print("Config broadcasted", config)
-    dataset, labels = load_data(config['subset'], config['dataset'])
+    dataset, labels = load_data(config['datapath'], config['subset'], config['dataset'])
     print("Data loaded")
     dataset = normalize(dataset)
     print("Data normalized")
     dataset, labels = flatten(dataset, labels)
-    c, labels_pred = cluster(dataset, config['n_clusters'])
+    c, labels_pred = cluster(dataset, config['n_clusters'], config=config['clustering_config'])
     print("Clustering finishes")
 
     plot_label_compare(labels, labels_pred, config)

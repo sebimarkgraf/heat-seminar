@@ -10,25 +10,24 @@ subset:
 datapath:
   desc: Where the data is located
   value: './data/'
-clustering_config:
-  metric:
-    desc: Which metric to use for the clustering to construct the similarity matrix (rbf|euclidean)
-    value: 'rbf'
-  gamma:
-    desc: Kernel coefficient sigma for rbf
-    value: 1.0
-  laplacian: 
-    desc: How to calculate the graph laplacian (affinity) ('fully_connected', 'eNeighbour')
-    value: 'fully_connected' 
-  threshold:
-    desc:  Threshold for affinity matrix if laplacian='eNeighbour' Ignorded for laplacian='fully_connected'
-    value: 1.0
-  boundary:
-    desc: How to interpret threshold (upper|lower)
-    value: 'upper'
-  n_lanczos:
-    desc: number of Lanczos iterations for Eigenvalue decomposition
-    value: 300
-  assign_labels:
-    desc: The strategy to use to assign labels in the embedding space
-    value: 'kmeans'
+metric:
+  desc: Which metric to use for the clustering to construct the similarity matrix (rbf|euclidean)
+  value: 'rbf'
+gamma:
+  desc: Kernel coefficient sigma for rbf
+  value: 1.0
+laplacian: 
+  desc: How to calculate the graph laplacian (affinity) ('fully_connected', 'eNeighbour')
+  value: 'fully_connected' 
+threshold:
+  desc:  Threshold for affinity matrix if laplacian='eNeighbour' Ignorded for laplacian='fully_connected'
+  value: 1.0
+boundary:
+  desc: How to interpret threshold (upper|lower)
+  value: 'upper'
+n_lanczos:
+  desc: number of Lanczos iterations for Eigenvalue decomposition
+  value: 300
+assign_labels:
+  desc: The strategy to use to assign labels in the embedding space
+  value: 'kmeans'

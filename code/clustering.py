@@ -128,7 +128,7 @@ def main():
     dataset = normalize(dataset)
     print("Data normalized")
     dataset, labels = flatten(dataset, labels)
-    c, labels_pred = cluster(dataset, config['n_clusters'], config=config['clustering_config'])
+    c, labels_pred = cluster(dataset, config['n_clusters'], config=config)
     print("Clustering finishes")
 
     plot_label_compare(labels, labels_pred, config)

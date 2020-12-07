@@ -35,8 +35,8 @@ def load_dataset(data_path: str, subset: str, dataset: str) -> ht.dndarray:
 
 def load_data(datapath: str, subset, dataset):
     # Load dataset from hdf5 file
-    dataset = load_dataset(data_path=datapath, subset=subset, dataset=dataset)[:1000]
-    labels = load_dataset(data_path=datapath, subset=subset, dataset="label")[:1000]
+    dataset = load_dataset(data_path=datapath, subset=subset, dataset=dataset)
+    labels = load_dataset(data_path=datapath, subset=subset, dataset="label")
     dataset.balance_()
     labels.balance_()
     return dataset, labels

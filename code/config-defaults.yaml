@@ -9,7 +9,7 @@ subset:
   value: 'validation'
 datapath:
   desc: Where the data is located
-  value: './data/'
+  value: '/pfs/work7/workspace/scratch/ih5525-BigDataTools_HeAT-0/data/'
 metric:
   desc: Which metric to use for the clustering to construct the similarity matrix (rbf|euclidean)
   value: 'rbf'

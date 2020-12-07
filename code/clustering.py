@@ -59,7 +59,7 @@ def flatten(dataset, labels):
 
 def cluster(dataset: ht.dndarray, n_clusters: int, config: dict) -> Tuple[ht.cluster.Spectral, np.array]:
     # c = ht.cluster.KMeans(n_clusters=config.n_clusters, init="kmeans++", max_iter=1000)
-    c = ht.cluster.Spectral(n_clusters=n_clusters, **config)
+    c = ht.cluster.Spectral(**config)
     labels_pred = c.fit_predict(dataset).squeeze()
     labels_pred = ht.resplit(labels_pred, axis=None).numpy()
 

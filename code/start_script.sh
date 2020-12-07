@@ -1,15 +1,14 @@
-#! /usr/bin/env bash
+#!/usr/bin/bash -x
 #SBATCH --exclusive
-#SBATCH --J=BigDataTools
-#SBATCH --nodes=N
-#SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=X
-#SBATCH --time=hh:mm:ss
+#SBATCH --job=BigDataTools
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=5
+#SBATCH --time=00:10:00
 #SBATCH --output=output_file.out
 #SBATCH --error=output_file.out
 
 module restore HeAT
-source /home/kit/stud/ulxhv/haet_seminar/code/venv/bin/activate
+source $HOME/heat-seminar/code/venv/bin/activate
 unset PYTHONPATH
 export OMP_NUM_THREADS=X
 
@@ -20,6 +19,7 @@ function runbenchmark()
     echo "Total number of tasks: ${SLURM_NTASKS}"
     echo "Number of Nodes: ${SLURM_JOB_NUM_NODES}"
     echo "Tasks per Node: ${SLURM_NTASKS_PER_NODE}"
-
-    srun python -u clustering.py
+    mpirun python ./clustering.py
 }
+
+runbenchmark

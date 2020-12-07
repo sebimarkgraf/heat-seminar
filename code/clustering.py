@@ -29,8 +29,6 @@ def only_root(func):
     return wrapped    
 
 
-ht.random.seed(1234)
-
 def load_dataset(data_path: str, subset: str, dataset: str) -> ht.dndarray:
     path = f"{data_path}{subset}.h5"
     return ht.load(path, dataset=dataset, split=0)
@@ -119,6 +117,8 @@ def init_wandb():
 
 
 def main():
+    ht.random.seed(1234)
+
     config = init_wandb()
     config = comm.bcast(config)
 

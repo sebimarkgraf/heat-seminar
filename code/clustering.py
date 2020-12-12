@@ -9,6 +9,7 @@ import numpy as np
 from functools import wraps
 import wandb
 from typing import Tuple
+import seaborn as sns
 
 
 comm = MPI.COMM_WORLD
@@ -55,8 +56,7 @@ def flatten(dataset, labels):
     return dataset, labels
 
 
-def cluster(dataset: ht.dndarray, n_clusters: int, config: dict) -> Tuple[ht.cluster.Spectral, np.array]:
-    # c = ht.cluster.KMeans(n_clusters=config.n_clusters, init="kmeans++", max_iter=1000)
+def cluster(dataset: ht.dndarray, config: dict) -> Tuple[ht.cluster.Spectral, np.array]:
     c = ht.cluster.Spectral(**config)
     labels_pred = c.fit_predict(dataset).squeeze()
     labels_pred = ht.resplit(labels_pred, axis=None).numpy()
@@ -110,6 +110,13 @@ def log_metrics(labels: np.array, labels_pred: np.array):
     print(logged_metrics)
 
 @only_root
+def plot_confusion(labels: np.array, labels_pred: np.array):
+
+    cm = metrics.confusion_matrix(labels, labels_pred)
+    f = sns.heatmap(cm, annot=True)
+    wandb.log({'Confusion Matrix': f})
+    
+@only_root
 def init_wandb():
     wandb.init(project="satellite-heat")
     wandb.config['n_processes'] = size
@@ -128,11 +135,12 @@ def main():
     dataset = normalize(dataset)
     print("Data normalized")
     dataset, labels = flatten(dataset, labels)
-    c, labels_pred = cluster(dataset, config['n_clusters'], config=config)
+    c, labels_pred = cluster(dataset, config=config)
     print("Clustering finishes")
 
     plot_label_compare(labels, labels_pred, config)
     plot_cluster_composition(labels, labels_pred, config)
+    plot_confusion(labels, labels_pred)
     log_metrics(labels, labels_pred)
 
     print("Finished")

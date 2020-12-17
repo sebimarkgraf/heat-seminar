@@ -1,10 +1,10 @@
-n_clusters: 
+n_clusters:
   desc: Number of clusters to search for
   value: 17
-dataset: 
+dataset:
   desc: Which dataset to load. Could be sen1 | sen2
   value: 'sen1'
-subset: 
+subset:
   desc: Which subset to laod (validation|training)
   value: 'validation'
 datapath:
@@ -16,9 +16,9 @@ metric:
 gamma:
   desc: Kernel coefficient sigma for rbf
   value: 1.0
-laplacian: 
+laplacian:
   desc: How to calculate the graph laplacian (affinity) ('fully_connected', 'eNeighbour')
-  value: 'fully_connected' 
+  value: 'fully_connected'
 threshold:
   desc:  Threshold for affinity matrix if laplacian='eNeighbour' Ignorded for laplacian='fully_connected'
   value: 1.0

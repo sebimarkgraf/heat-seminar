@@ -1,5 +1,7 @@
-import numpy as np
 from itertools import permutations
+
+import numpy as np
+
 
 def remap_labels(pred_labels: np.array, true_labels: np.array):
     """Rename prediction labels (clustered output) to best match true labels."""

@@ -4,3 +4,4 @@ wandb==0.10.11
 plotly==4.12.0
 matplotlib==3.3.2
 seaborn==0.11.0
+pre-commit==2.8.2

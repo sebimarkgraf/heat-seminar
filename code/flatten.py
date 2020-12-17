@@ -1,7 +1,5 @@
-from heat import factories
 import torch
-from heat import resplit
-from heat import DNDarray
+from heat import DNDarray, factories, resplit
 
 
 def heat_flatten(a: DNDarray, start_dim=0):
@@ -24,14 +22,22 @@ def heat_flatten(a: DNDarray, start_dim=0):
     """
     if a.split is None:
         return factories.array(
-            torch.flatten(a._DNDarray__array, start_dim=start_dim), dtype=a.dtype, is_split=None, device=a.device, comm=a.comm
+            torch.flatten(a._DNDarray__array, start_dim=start_dim),
+            dtype=a.dtype,
+            is_split=None,
+            device=a.device,
+            comm=a.comm,
         )
 
     if a.split > 0:
         a = resplit(a, 0)
 
     a = factories.array(
-        torch.flatten(a._DNDarray__array, start_dim=start_dim), dtype=a.dtype, is_split=a.split, device=a.device, comm=a.comm
+        torch.flatten(a._DNDarray__array, start_dim=start_dim),
+        dtype=a.dtype,
+        is_split=a.split,
+        device=a.device,
+        comm=a.comm,
     )
     a.balance_()
 

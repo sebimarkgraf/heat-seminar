@@ -11,7 +11,9 @@ import wandb
 from typing import Tuple
 import seaborn as sns
 import logging
+import torch
 
+from flatten import heat_flatten
 
 
 
@@ -63,7 +65,7 @@ def normalize(dataset):
 
 def flatten(dataset, labels):
     logger.debug(f"Reshaping the dataset {dataset.shape}")
-    dataset = ht.reshape(dataset, (dataset.shape[0], dataset.shape[1] * dataset.shape[2] * dataset.shape[3]))
+    dataset = heat_flatten(dataset, start_dim=1)
     logger.debug("Getting max labels")
     labels = ht.argmax(labels, axis=1)
     logger.debug("Gathering the labels on root node")

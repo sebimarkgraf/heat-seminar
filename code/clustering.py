@@ -66,6 +66,7 @@ def normalize(dataset):
 def flatten(dataset, labels):
     logger.debug(f"Reshaping the dataset {dataset.shape}")
     dataset = heat_flatten(dataset, start_dim=1)
+    logger.debug(f"New shape {dataset.shape}")
     logger.debug("Getting max labels")
     labels = ht.argmax(labels, axis=1)
     logger.debug("Gathering the labels on root node")

@@ -1,9 +1,10 @@
 from heat import factories
 import torch
 from heat import resplit
+from heat import DNDarray
 
 
-def heat_flatten(a, start_dim=0):
+def heat_flatten(a: DNDarray, start_dim=0):
     """
     Flattens an array into one dimension.
     WARNING: if a.split > 0, then the array must be resplit.
@@ -30,7 +31,7 @@ def heat_flatten(a, start_dim=0):
         a = resplit(a, 0)
 
     a = factories.array(
-        torch.flatten(a.larray, start_dim=start_dim), dtype=a.dtype, is_split=a.split, device=a.device, comm=a.comm
+        torch.flatten(a._DNDarray__array, start_dim=start_dim), dtype=a.dtype, is_split=a.split, device=a.device, comm=a.comm
     )
     a.balance_()
 

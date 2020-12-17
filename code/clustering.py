@@ -10,12 +10,25 @@ from functools import wraps
 import wandb
 from typing import Tuple
 import seaborn as sns
+import logging
+
+
 
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+FORMAT = '[%(asctime)s]: %(message)s'
+TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+formatter = logging.Formatter(FORMAT, TIME_FORMAT)
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 TIMESTAMP = time.time()
 
@@ -49,14 +62,18 @@ def normalize(dataset):
     
 
 def flatten(dataset, labels):
+    logger.debug(f"Reshaping the dataset {dataset.shape}")
     dataset = ht.reshape(dataset, (dataset.shape[0], dataset.shape[1] * dataset.shape[2] * dataset.shape[3]))
+    logger.debug("Getting max labels")
     labels = ht.argmax(labels, axis=1)
+    logger.debug("Gathering the labels on root node")
     labels = ht.resplit(labels, axis=None).numpy()
 
     return dataset, labels
 
 
 def cluster(dataset: ht.dndarray, config: dict) -> Tuple[ht.cluster.Spectral, np.array]:
+    logger.debug("Starting clustering")
     c = ht.cluster.Spectral(**config)
     labels_pred = c.fit_predict(dataset).squeeze()
     labels_pred = ht.resplit(labels_pred, axis=None).numpy()
@@ -107,7 +124,7 @@ def log_metrics(labels: np.array, labels_pred: np.array):
         "V-Measure": metrics.v_measure_score(labels, labels_pred)
     } 
     wandb.log(logged_metrics)
-    print(logged_metrics)
+    logger.info(logged_metrics)
 
 @only_root
 def plot_confusion(labels: np.array, labels_pred: np.array):
@@ -129,21 +146,22 @@ def main():
     config = init_wandb()
     config = comm.bcast(config)
 
-    print("Config broadcasted", config)
+    logger.info(f"Config broadcasted {config}")
     dataset, labels = load_data(config['datapath'], config['subset'], config['dataset'])
-    print("Data loaded")
+    logger.info("Data loaded")
     dataset = normalize(dataset)
-    print("Data normalized")
+    logger.info("Data normalized")
     dataset, labels = flatten(dataset, labels)
+    logger.info("Data flattened")
     c, labels_pred = cluster(dataset, config=config)
-    print("Clustering finishes")
+    logger.info("Clustering finishes")
 
     plot_label_compare(labels, labels_pred, config)
     plot_cluster_composition(labels, labels_pred, config)
     plot_confusion(labels, labels_pred)
     log_metrics(labels, labels_pred)
 
-    print("Finished")
+    logger.info("Finished")
 
 
 

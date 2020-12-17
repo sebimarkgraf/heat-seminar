@@ -1,3 +1,35 @@
 
 \section{Introduction}
 \label{sec:intro}
+Over the last decade not only the computing power is growing exponentially, but the data sets are growing extremely fast as well.
+Collecting data is becoming easier, especially through the vast amount of online services. 
+Although, this allows machine learning algorithms to become more and more precise, there are downsides arising as well with
+the increased size.
+
+To store the datasets the storage capacity needs to increase in the same amount. More importantly, the computer power needs to increase
+as well. But just using raw power does not help which leaves us with using efficient algorithms and leveraging the underlying comput power optimally.
+Especially, when using \gls{GPU} this is not an easy task. To help with the task many libraries were born e.g. PyTorch.
+They provide mathematical computations efficiently implemented and leverage an \gls{GPU} if available.
+
+Still, single machines are reaching their limit when working with huge data sets. The solution lies in using multiple computing nodes. 
+But, while the libraries already provide excellent single node support, they do not provide an easy interface to work on a distributed system.
+This leaves the developer with the task of managing different nodes and distribute the data correctly on the compute node.
+
+The library developed by the Helmholtz Community \gls{HeAT} aims to solve this problem.
+Providing an \gls{numpy} like interfface the library wraps \gls{PyTorch} and \gls{MPI} to allow the developer to write his script on a single computer
+and perform it on a distributed compute cluster without worrying about the correct synchronization.
+
+Another rising problems lies in the tedious work of labelling the data set.
+To use these data sets for classification or other machine learning purposes instance labels are needed. 
+These labels needs to be precise and often need to be created manually. 
+Due to the sheer amount of data that needs to be labelled, this process is expensive and takes a lot of time.
+
+Unsupervised learning is the category of machine learning algorithms that do not use labels for their purpose. They try to
+use the inherent structure of the dataset itself to find useful information and insights.
+A well known family of algorithms are the clustering algorithms. They are an unsupervised pendant to classification algorithms
+and split the dataset in different clusters according to the features. 
+When combined with expert knowledge this could allow to classify datasets without labelling them first.
+
+When combining these two approaches, it allows to use huge data sets without the tedious work of labelling and with minimal development effort.
+The goal of this paper is to evaluate the approach on remote sensing data which can only be labelled with a lot of manual effort.
+

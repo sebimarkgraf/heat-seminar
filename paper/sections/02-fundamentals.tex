@@ -11,5 +11,24 @@
 \subsection{Remote Sensing and Local Climate Zone Classification}
 \label{ssec:remote_sensing_and_local_climate_zone_classification}
 
+\subsection{SO2Sat}
+\citeauthor{zhu_so2sat_2019} presented the SO2Sat dataset in \cite{zhu_so2sat_2019}. They describe SO2Sat as a \enquote{valuable benchmark dataset [...], which consists of local climate zone (LCZ) labels of about half a million [...] image patches}.
+These images are taken from Sentinel-1 and Sentinel-2. Each image is 32 by 32 pixels and contains 8 channels for Sentinel-1 and 10 channels for Sentinel-2.
+After preprocessing these images they were given to domain experts for labelling which follwed a \enquote{carefully designed labelling work flow}.
+Through the careful work the dataset achieved a \enquote{overall confidence of 85\%}.
+The annotations contains the 17 LCZ classes.
+The regions of the dataset are 52 cities.
+
 \subsection{Clustering Algorithms}
 \label{ssec:clustering_algorithms}
+
+
+\subsection{Clustering Evaluation Metrics}
+\label{ssec:clustering_evaluation_metrics}
+
+Evaluating clusters is more complicated than evaluating classification or other supervised machine learning tasks.
+Unsupervised tasks can be evaluating using interal or external metrics. While, internal metrics are derived from the algorithm itself e.g. Cluster purity, external metrics need labels for the dataset.
+
+Due to in this work used dataset having labels, this section is going to focus on external metrics.
+
+Adjusted Rand Index

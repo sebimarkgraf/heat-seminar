@@ -14,6 +14,7 @@ import logging
 import torch
 
 from flatten import heat_flatten
+from remap_labels import remap_labels
 
 
 
@@ -133,8 +134,9 @@ def log_metrics(labels: np.array, labels_pred: np.array):
 def plot_confusion(labels: np.array, labels_pred: np.array):
 
     cm = metrics.confusion_matrix(labels, labels_pred)
-    f = sns.heatmap(cm, annot=True)
-    wandb.log({'Confusion Matrix': f})
+    logger.info(cm)
+    wandb.log({"conf_mat" : wandb.plot.confusion_matrix(labels_pred, labels)})
+   
     
 @only_root
 def init_wandb():

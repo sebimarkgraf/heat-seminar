@@ -50,12 +50,13 @@ def load_dataset(data_path: str, subset: str, dataset: str) -> ht.dndarray:
 
 
 def take_percentage(dataset: ht.DNDarray, percentage: float) -> ht.DNDarray:
-    if (np.isclose(percentage, 1.0)):
+    if np.isclose(percentage, 1.0):
         return dataset
-    
+
     elements = int(dataset.shape[0] * percentage)
 
     return dataset[:elements]
+
 
 def load_data(datapath: str, subset: str, dataset: str, percentage: float):
     # Load dataset from hdf5 file
@@ -88,7 +89,16 @@ def flatten(dataset, labels):
 
 def cluster(dataset: ht.dndarray, config: dict) -> Tuple[ht.cluster.Spectral, np.array]:
     logger.debug("Starting clustering")
-    c = ht.cluster.Spectral(n_clusters=config['n_clusters'], gamma=config['gamma'], metric=config['metric'], laplacian=config['laplacian'], n_lanczos=config['n_lanczos'], threshold=config['threshold'], boundary=config['boundary'], assign_labels=config['assign_labels'])
+    c = ht.cluster.Spectral(
+        n_clusters=config["n_clusters"],
+        gamma=config["gamma"],
+        metric=config["metric"],
+        laplacian=config["laplacian"],
+        n_lanczos=config["n_lanczos"],
+        threshold=config["threshold"],
+        boundary=config["boundary"],
+        assign_labels=config["assign_labels"],
+    )
     labels_pred = c.fit_predict(dataset).squeeze()
     labels_pred = ht.resplit(labels_pred, axis=None).numpy()
 
@@ -171,7 +181,12 @@ def main():
     config = comm.bcast(config)
 
     logger.info(f"Config broadcasted {config}")
-    dataset, labels = load_data(config["datapath"], config["subset"], dataset=config["dataset"], percentage=config['dataset_percentage'])
+    dataset, labels = load_data(
+        config["datapath"],
+        config["subset"],
+        dataset=config["dataset"],
+        percentage=config["dataset_percentage"],
+    )
     logger.info("Data loaded")
     dataset = normalize(dataset)
     logger.info("Data normalized")
@@ -180,7 +195,7 @@ def main():
     c, labels_pred = cluster(dataset, config=config)
     logger.info("Clustering finishes")
 
-    logger.info(f"Shapes: {labels_pred.shape} {labels.shape}") 
+    logger.info(f"Shapes: {labels_pred.shape} {labels.shape}")
     log_metrics(labels, labels_pred)
     plot_label_compare(labels, labels_pred, config)
     plot_confusion(labels, labels_pred)

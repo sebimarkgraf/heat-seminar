@@ -62,7 +62,7 @@ def load_data(datapath: str, subset: str, dataset: str, percentage: float):
     dataset = load_dataset(data_path=datapath, subset=subset, dataset=dataset)
     labels = load_dataset(data_path=datapath, subset=subset, dataset="label")
     dataset = take_percentage(dataset, percentage)
-    labels = take_percentage(dataset, percentage)
+    labels = take_percentage(labels, percentage)
     dataset.balance_()
     labels.balance_()
     return dataset, labels
@@ -88,7 +88,7 @@ def flatten(dataset, labels):
 
 def cluster(dataset: ht.dndarray, config: dict) -> Tuple[ht.cluster.Spectral, np.array]:
     logger.debug("Starting clustering")
-    c = ht.cluster.Spectral(**config)
+    c = ht.cluster.Spectral(n_clusters=config['n_clusters'], gamma=config['gamma'], metric=config['metric'], laplacian=config['laplacian'], n_lanczos=config['n_lanczos'], threshold=config['threshold'], boundary=config['boundary'], assign_labels=config['assign_labels'])
     labels_pred = c.fit_predict(dataset).squeeze()
     labels_pred = ht.resplit(labels_pred, axis=None).numpy()
 
@@ -180,12 +180,11 @@ def main():
     c, labels_pred = cluster(dataset, config=config)
     logger.info("Clustering finishes")
 
-
-    plot_confusion(labels, labels_pred)
-    plot_label_compare(labels, labels_pred, config)
-    plot_cluster_composition(labels, labels_pred, config)
+    logger.info(f"Shapes: {labels_pred.shape} {labels.shape}") 
     log_metrics(labels, labels_pred)
-
+    plot_label_compare(labels, labels_pred, config)
+    plot_confusion(labels, labels_pred)
+    plot_cluster_composition(labels, labels_pred, config)
     logger.info("Finished")
 
 

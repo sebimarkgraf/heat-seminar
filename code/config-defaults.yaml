@@ -6,7 +6,7 @@ dataset:
   value: 'sen1'
 subset:
   desc: Which subset to laod (validation|training)
-  value: 'validation'
+  value: 'training'
 datapath:
   desc: Where the data is located
   value: '/pfs/work7/workspace/scratch/ih5525-BigDataTools_HeAT-0/data/'
@@ -27,10 +27,10 @@ boundary:
   value: 'upper'
 n_lanczos:
   desc: number of Lanczos iterations for Eigenvalue decomposition
-  value: 300
+  value: 600
 assign_labels:
   desc: The strategy to use to assign labels in the embedding space
   value: 'kmeans'
 dataset_percentage:
   desc: Take part of the dataset (1.0 for full dataset)
-  value: 0.5
+  value: 0.4

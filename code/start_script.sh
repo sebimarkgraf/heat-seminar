@@ -1,11 +1,12 @@
 #!/usr/bin/bash -x
 #SBATCH --exclusive
 #SBATCH --job=BigDataTools
-#SBATCH --nodes=1
-#SBATCH --ntasks-per-node=5
-#SBATCH --time=00:10:00
+#SBATCH --nodes=3
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=01:00:00
 #SBATCH --output=output_file.out
 #SBATCH --error=output_file.out
+#SBATCH --mem=90000mb
 
 module restore HeAT
 source $HOME/heat-seminar/code/venv/bin/activate

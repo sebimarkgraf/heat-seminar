@@ -31,3 +31,6 @@ n_lanczos:
 assign_labels:
   desc: The strategy to use to assign labels in the embedding space
   value: 'kmeans'
+dataset_percentage:
+  desc: Take part of the dataset (1.0 for full dataset)
+  value: 0.5

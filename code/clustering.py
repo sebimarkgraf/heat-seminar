@@ -49,16 +49,26 @@ def load_dataset(data_path: str, subset: str, dataset: str) -> ht.dndarray:
     return ht.load(path, dataset=dataset, split=0)
 
 
-def load_data(datapath: str, subset, dataset):
+def take_percentage(dataset: ht.DNDarray, percentage: float) -> ht.DNDarray:
+    if (np.isclose(percentage, 1.0)):
+        return dataset
+    
+    elements = int(dataset.shape[0] * percentage)
+
+    return dataset[:elements]
+
+def load_data(datapath: str, subset: str, dataset: str, percentage: float):
     # Load dataset from hdf5 file
     dataset = load_dataset(data_path=datapath, subset=subset, dataset=dataset)
     labels = load_dataset(data_path=datapath, subset=subset, dataset="label")
+    dataset = take_percentage(dataset, percentage)
+    labels = take_percentage(dataset, percentage)
     dataset.balance_()
     labels.balance_()
     return dataset, labels
 
 
-def normalize(dataset):
+def normalize(dataset: ht.DNDarray):
     channel_mean = ht.mean(dataset, axis=(0, 1, 2))
     channel_std = ht.std(dataset, axis=(0, 1, 2))
     return (dataset - channel_mean) / channel_std
@@ -161,7 +171,7 @@ def main():
     config = comm.bcast(config)
 
     logger.info(f"Config broadcasted {config}")
-    dataset, labels = load_data(config["datapath"], config["subset"], config["dataset"])
+    dataset, labels = load_data(config["datapath"], config["subset"], dataset=config["dataset"], percentage=config['dataset_percentage'])
     logger.info("Data loaded")
     dataset = normalize(dataset)
     logger.info("Data normalized")
@@ -170,9 +180,10 @@ def main():
     c, labels_pred = cluster(dataset, config=config)
     logger.info("Clustering finishes")
 
+
+    plot_confusion(labels, labels_pred)
     plot_label_compare(labels, labels_pred, config)
     plot_cluster_composition(labels, labels_pred, config)
-    plot_confusion(labels, labels_pred)
     log_metrics(labels, labels_pred)
 
     logger.info("Finished")

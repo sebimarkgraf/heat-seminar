@@ -20,8 +20,62 @@ Through the careful work the dataset achieved a \enquote{overall confidence of 8
 The annotations contains the 17 LCZ classes.
 The regions of the dataset are 52 cities.
 
-\subsection{Clustering Algorithms}
-\label{ssec:clustering_algorithms}
+\subsection{Spectral Clustering}
+\label{ssec:spectral_clustering}
+
+\begin{algorithm}[ht]
+  \SetKwData{Laplace}{\(L\)}\SetKwData{Adj}{\(W\)}
+  \KwData{Similariy matrix \(S\), number \(k\) of clusters}
+  \KwResult{Clusters \(A_1, \ldots, A_k\) }
+  Construct a similarity graph\;
+  \Adj \(\leftarrow\) weighted adjacency matrix\;
+  \Laplace \(\leftarrow\) computeLaplacian(\Adj)\;
+  \(u_1, \ldots, u_k \leftarrow\) computeEigenvectors(L)\;
+  \(U\) \(\leftarrow\) Matrix with columns \(u_1, \ldots, u_k\)\;
+  \ForEach(){\(i = 1, \ldots, n\)}{
+    \(y_i\) \(\leftarrow\) vector corresponding to the \(i\)-th row of \(U\)
+  }
+\(C_1, \ldots, C_k \leftarrow\) k-means(\(y_1, \ldots, y_n\))\;
+
+  \caption{Basic Spectral Clustering}\label{alg:basic_spectral}
+ \end{algorithm}
+
+\enquote{Spectral Clustering is the process of partitioning data samples into
+\(k\) groups based on graph theory} \cite{krajsek_helmholtz_nodate}. Therefore,
+to derive the formulation of Spectral Clustering we introduce the undirected graph \(G=(V, E)\).
+We consider the graph as weighted by assigning each edge an weight \(w_{ij}\). As the graph
+is unidrectional, the weight is identical for \(w_{ij} = w_{ji} \).
+% Degree Matrix
+We define the degree of a vertex \(v_i \in V\) by iterating over all vertices \(v_j \in V\) that are connected to \(v_i\).
+Therefore, the weight of the edge is positive:
+\[d_i = \sum_{j=1}^n w_{ij}\]
+Using the degree defined before, we define the degree matrix \(D\) as the diagonal matrix whith the degrees \(d_1, \ldots, d_n\) on the diagonal.
+\cite{von_luxburg_tutorial_2007}
+% Weights Matrix
+For 2 subsets of indices \(A, B\) we define the weights matrix \cite{von_luxburg_tutorial_2007}:
+\[W(A, B) := \sum_{i \in A, j \in B} w_{ij}\]
+
+
+There are several possible ways to construct such a similarity graph from two datasets.
+The following three are used often for spectral clustering:
+\begin{itemize}
+  \item Fully connected
+  \item Symmetric
+  \item \(\epsilon\)-Neighbourhood
+\end{itemize}
+According to \cite{von_luxburg_tutorial_2007} there is no theoretical work on the choosing of one method over
+another.
+
+Using the constructed similarity graph we need to calculate the spectrum of the similarity matrix.
+This is done by constructing the Laplacian defined via
+\[L = W - D\]
+using \(W, D\) as defined earlier.
+
+The Lanczos algorithm \cite{lanczos_iteration_1950} is used to calculate the eigenvalues and eigenvectors from the laplacian.
+When using the \(k\) smallest eigenvalues and the korresponding eigenvectors \(e_1, \ldots, e_k\) we can embedd the dataset.
+
+Now a clustering can be performed in the smaller embedding space of the eigenbasis using another algorithm, e.g. KMeans.
+The overall algorithm can be found in algorithm \ref{alg:basic_spectral}.
 
 
 \subsection{Clustering Evaluation Metrics}
@@ -32,4 +86,4 @@ Unsupervised tasks can be evaluating using interal or external metrics. While, i
 
 Due to in this work used dataset having labels, this section is going to focus on external metrics.
 
-Adjusted Rand Index
+\textbf{Adjusted Rand Index}

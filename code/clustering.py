@@ -23,7 +23,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+ch.setLevel(logging.INFO)
 FORMAT = "[%(asctime)s]: %(message)s"
 TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 formatter = logging.Formatter(FORMAT, TIME_FORMAT)
@@ -99,7 +99,14 @@ def cluster(dataset: ht.dndarray, config: dict) -> Tuple[ht.cluster.Spectral, np
         boundary=config["boundary"],
         assign_labels=config["assign_labels"],
     )
-    labels_pred = c.fit_predict(dataset).squeeze()
+    for i in range(config["num_fittings"]):
+        logger.info(f"RUN {i} start")
+        start = time.perf_counter()
+        c = c.fit(dataset)
+        stop = time.perf_counter()
+        log_compute_time(start, stop)
+        logger.info(f"RUN {i} finished in {stop-start:.2f}s")
+    labels_pred = c.predict(dataset).squeeze()
     labels_pred = ht.resplit(labels_pred, axis=None).numpy()
 
     return c, labels_pred
@@ -172,6 +179,11 @@ def init_wandb():
     wandb.init(project="satellite-heat")
     wandb.config["n_processes"] = size
     return wandb.config._as_dict()
+
+
+@only_root
+def log_compute_time(start, stop):
+    wandb.log({"Computing Time": stop - start})
 
 
 def main():

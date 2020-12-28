@@ -1,4 +1,5 @@
 import logging
+import math
 import os
 import random
 import time
@@ -200,8 +201,9 @@ def main():
         percentage=config["dataset_percentage"],
     )
     logger.info("Data loaded")
-    dataset = normalize(dataset)
-    logger.info("Data normalized")
+    if config["normalize"]:
+        dataset = normalize(dataset)
+        logger.info("Data normalized")
     dataset, labels = flatten(dataset, labels)
     logger.info("Data flattened")
     c, labels_pred = cluster(dataset, config=config)

@@ -11,7 +11,6 @@
 module restore HeAT
 source $HOME/heat-seminar/code/venv/bin/activate
 unset PYTHONPATH
-export OMP_NUM_THREADS=X
 
 function runbenchmark()
 {

@@ -155,13 +155,15 @@ def plot_cluster_composition(labels: np.array, labels_pred: np.array, config: di
 
 
 @only_root
-def log_metrics(labels: np.array, labels_pred: np.array):
+def log_metrics(labels: np.array, labels_pred: np.array, prefix=""):
     logged_metrics = {
-        "Adjusted Rand Index": metrics.adjusted_rand_score(labels, labels_pred),
-        "Mutual Information Score": metrics.adjusted_mutual_info_score(
+        f"{prefix}Adjusted Rand Index": metrics.adjusted_rand_score(
             labels, labels_pred
         ),
-        "V-Measure": metrics.v_measure_score(labels, labels_pred),
+        f"{prefix}Mutual Information Score": metrics.adjusted_mutual_info_score(
+            labels, labels_pred
+        ),
+        f"{prefix}V-Measure": metrics.v_measure_score(labels, labels_pred),
     }
     wandb.log(logged_metrics)
     logger.info(logged_metrics)
@@ -214,6 +216,20 @@ def main():
     plot_label_compare(labels, labels_pred, config)
     plot_confusion(labels, labels_pred)
     plot_cluster_composition(labels, labels_pred, config)
+    logger.info("Training Finished")
+
+    val_data, val_labels = load_data(
+        config["datapath"], "validation", dataset=config["dataset"], percentage=0.1
+    )
+    if config["normalize"]:
+        val_data = normalize(val_data)
+        logger.info("Val Data normalized")
+    val_data, val_labels = flatten(val_data, val_labels)
+    val_pred = c.predict(val_data).squeeze()
+    val_pred = ht.resplit(val_pred, axis=None).numpy()
+
+    logger.info("Log Validation result")
+    log_metrics(val_labels, val_pred, prefix="val: ")
     logger.info("Finished")
 
 

@@ -219,7 +219,7 @@ def main():
     logger.info("Training Finished")
 
     val_data, val_labels = load_data(
-        config["datapath"], "validation", dataset=config["dataset"], percentage=0.1
+        config["datapath"], "validation", dataset=config["dataset"], percentage=1.0
     )
     if config["normalize"]:
         val_data = normalize(val_data)

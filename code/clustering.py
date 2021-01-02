@@ -170,6 +170,11 @@ def log_metrics(labels: np.array, labels_pred: np.array, prefix=""):
 
 
 @only_root
+def log_to_wandb(name: str, value: np.array):
+    wandb.log({f"{name}": value})
+
+
+@only_root
 def plot_confusion(labels: np.array, labels_pred: np.array):
 
     cm = metrics.confusion_matrix(labels, labels_pred)
@@ -217,6 +222,13 @@ def main():
     plot_confusion(labels, labels_pred)
     plot_cluster_composition(labels, labels_pred, config)
     logger.info("Training Finished")
+
+    logger.info("Getting eigenvalues")
+    eigenvalues, eigenvectors = c._spectral_embedding(dataset)
+    eigenvalues, _ = ht.sort(eigenvalues)[:100]
+    eigenvalues = ht.resplit(eigenvalues, axis=None).numpy()
+    log_to_wandb("eigenvalues", eigenvalues)
+    logger.info("Sent eigenvalues")
 
     val_data, val_labels = load_data(
         config["datapath"], "validation", dataset=config["dataset"], percentage=1.0

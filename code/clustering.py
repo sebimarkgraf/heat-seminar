@@ -175,7 +175,8 @@ def log_metrics(labels: np.array, labels_pred: np.array, prefix=""):
 
 @only_root
 def log_eigenvalues(value: np.array):
-    wandb.Table({"eigenvalues": value})
+    ev_table = wandb.Table({"eigenvalues": value})
+    wandb.log({"eigenvalues": ev_table})
 
 
 @only_root

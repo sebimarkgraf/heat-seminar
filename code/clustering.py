@@ -59,6 +59,10 @@ def take_percentage(dataset: ht.DNDarray, percentage: float) -> ht.DNDarray:
     return dataset[:elements]
 
 
+def calc_weak_scaling_percentage(num_processes: int, max_processes: int) -> float:
+    return (num_processes / max_processes) ** 2
+
+
 def load_data(datapath: str, subset: str, dataset: str, percentage: float):
     # Load dataset from hdf5 file
     dataset = load_dataset(data_path=datapath, subset=subset, dataset=dataset)
@@ -186,6 +190,16 @@ def plot_confusion(labels: np.array, labels_pred: np.array):
 def init_wandb():
     wandb.init(project="satellite-heat")
     wandb.config["n_processes"] = size
+    if not (wandb.config["weak_scaling_max"] == 0):
+        logger.info("Weak Scaling run")
+        wandb.config.update(
+            {
+                "dataset_percentage": calc_weak_scaling_percentage(
+                    size, wandb.config["weak_scaling_max"]
+                )
+            },
+            allow_val_change=True,
+        )
     return wandb.config._as_dict()
 
 

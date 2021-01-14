@@ -1,8 +1,15 @@
 \section{Fundamentals}
 \label{sec:fundamentals}
 
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.9\linewidth]{images/schematic-lcz.png}
+  \caption{The LCZ classes as schematics on the left and matching of classes for a city in the centre. Image taken from \cite{zhu_so2sat_2019}.}\label{fig:lcz_classes}
+\end{figure*}
+
+
 \subsection{Distributed Array Computation}
-\label{ssec:distributed_array_computation}
+\label{subsec:distributed_array_computation}
 General array computation is used in a lof of scientific fields nowadays.
 Simulation of atomic levels or measurements of fuel are fine grained enough to have huge data amounts
 and they still need to be processed.
@@ -11,9 +18,17 @@ the computing time should go down while the available memory increases.
 But writing distributed programs from scratch is hard problem especially for scientists that have limited amount
 of experience with computing in comparison to computer scientists.
 
+\subsection{MPI}
+\label{subec:mpi}
+\gls{MPI} is a message-passing standard published from the Message-Passing Interface Forum. It is currently available in version 3.1 \cite{message_passing_interface_forum_mpi_nodate}.
+\enquote{The goal of the Message-Passing-Interface, simply stated, is to develop a widely used standard for writing message-passing programs}\cite{message_passing_interface_forum_mpi_nodate}.
+With this goal \gls{MPI} is today often used in \gls{HPC}, especially in Grid Computing. The standard interface allows to pass results or data between different processes or nodes.
+Due to \gls{MPI} being a standard multiple implementations exist, that support different versions of the standard.
+% TODO: Add citation
+Some of these implementations OpenMPI \cite{noauthor_open_nodate} and Intel MPI \cite{noauthor_intel_nodate}, which are available on our compute ressources.
 
 \subsection{HEAT}
-\label{ssec:heat}
+\label{subsec:heat}
 \gls{HeAT} is introduced in \cite{krajsek_helmholtz_nodate}. HeAT aims to be a mathemtical library for distributed computations.
 It conforms to a Numpy \cite{noauthor_numpy_nodate} interface and make all distributed calculations transparent. To move from executing \gls{HeAT} scripts to executing them parallel
 or distributed one just needs to change the execution command to MPI.
@@ -36,13 +51,7 @@ is splitted already during loading. Therefore, calculations can start right away
 
 
 \subsection{Local Climate Zone Classification}
-\label{ssec:local_climate_zone_classification}
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=0.9\linewidth]{images/schematic-lcz.png}
-  \caption{The LCZ classes as schematics on the left and matching of classes for a city in the centre. Image taken from \cite{zhu_so2sat_2019}.}\label{fig:lcz_classes}
-\end{figure*}
+\label{subsec:local_climate_zone_classification}
 
 \gls{LCZ}s are a scheme formally proposed by \citeauthor{stewart_local_2012} in \cite{stewart_local_2012}. The scheme classifies areas based on fabric, land cover, structure
 and metabolism into one of 17 \gls{LCZ}s. \cite{xue_applications_2020}
@@ -53,7 +62,7 @@ The \gls{LCZ}s are decided by 4 components:
   \item Surface cover around roughness features
   \item Thermal admittance of materials
 \end{enumerate}
-The different classes can be seen in figure \ref{fig:lcz_classes}.
+The different classes can be seen in \cref{fig:lcz_classes}.
 
 
 
@@ -66,9 +75,9 @@ The annotations contains the 17 LCZ classes.
 The regions of the dataset are 52 cities.
 
 \subsection{Spectral Clustering}
-\label{ssec:spectral_clustering}
+\label{subsec:spectral_clustering}
 
-\begin{algorithm}[h]
+\begin{algorithm}[b]
   \SetKwData{Laplace}{\(L\)}\SetKwData{Adj}{\(W\)}
   \KwData{Similariy matrix \(S\), number \(k\) of clusters}
   \KwResult{Clusters \(A_1, \ldots, A_k\) }
@@ -122,9 +131,37 @@ When using the \(k\) smallest eigenvalues and the korresponding eigenvectors \(e
 Now a clustering can be performed in the smaller embedding space of the eigenbasis using another algorithm, e.g. KMeans.
 The overall algorithm can be found in algorithm \ref{alg:basic_spectral}.
 
+\begin{figure}
+  \includegraphics{images/spectral_example.png}
+  \caption{2 Half-Moon example for clustering performance of spectral clustering. Taken from \cite{noauthor_23_2020}.}
+  \label{fig:spectral_example}
+\end{figure}
+
+One of the most common examples for spectral clustering can be seen in \cref{fig:spectral_example}. Spectral Clustering is able to
+separate the both datasets. This is often compared with KMeans which fails to correctly recognize the different clusters when using the euclidean distance.
+
+\subsection{Distance Metrics}
+\label{subsec:distance_metrics}
+For the spectral clustering the distance between samples needs to be measured. Depending on the data different ways to measure the distance are implemented in \gls{HeAT}.
+
+\subsubsection{Euclidean Distance}
+The euclidean distance is a default way to measure the distance. The euclidean distance of two points \(X = (x_1, \ldots, x_n ), X' = (x_1', \ldots, x_n')\) is commonly defined  as:
+\[
+  d\left(X, X'\right) = \sqrt{{(x_1' - x_1)}^2 + \ldots + {(x_n' - x_n)}^2}
+\]
+It is fast and easy to calculate, but it allows only for linear separatation with most algorithms.
+
+\subsubsection{Radial Basis Function Kernel}
+The RBF kernel is a kernel that wraps the euclidean distance \(d\) \cite{vert_primer_2004}:
+\[
+  K\left(X, X'\right) = \exp(-\gamma d(X, X'))
+\]
+The RBF kernel is a measure of similarity and augments the effects of the euclidean distance due to the exponential function.
+It allows to seperate non-linear data with many algorithms.
+
 
 \subsection{Clustering Evaluation Metrics}
-\label{ssec:clustering_evaluation_metrics}
+\label{subsec:clustering_evaluation_metrics}
 
 Evaluating clusters is more complicated than evaluating classification or other supervised machine learning tasks.
 Unsupervised tasks can be evaluating using interal or external metrics. While, internal metrics are derived from the algorithm itself e.g. Cluster purity, external metrics need labels for the dataset.
@@ -143,3 +180,9 @@ The raw Rand Index is mathematically given by \cite{noauthor_23_2020} as
 \[RI = \frac{a + b}{C_2^{n_{samples}}}\]
 When adjusting this index for random assignments we yield:
 \[ARI = \frac{RI - \mathbb{E} [RI]}{\max (RI) - \mathbb{E} [RI]}\]
+
+
+\begin{figure*}
+  \includegraphics[width=0.9\linewidth]{images/strong_scaling_chart.png}
+  \caption{Strong scaling behaviour of the Spectral Clustering algorithm. Baseline of 1 node with \(6489s\) excluded for visual purposes.}\label{fig:strong_scaling}
+\end{figure*}

@@ -175,8 +175,12 @@ def log_metrics(labels: np.array, labels_pred: np.array, prefix=""):
 
 @only_root
 def log_eigenvalues(value: np.array):
-    ev_table = wandb.Table({"eigenvalues": value})
-    wandb.log({"eigenvalues": ev_table})
+    fig, ax = plt.subplots()
+    ax.scatter(np.arange(value.shape[0]), value)
+
+    wandb.log({"eigenvalues": fig})
+    fig.savefig("eigenvalues")
+    plt.close(fig)
 
 
 @only_root
@@ -240,12 +244,10 @@ def main():
 
     logger.info("Getting eigenvalues")
     eigenvalues, eigenvectors = c._spectral_embedding(dataset)
-    eigenvalues, _ = ht.sort(eigenvalues)[:100]
-    eigenvalues = ht.stack(
-        (ht.arange(eigenvalues.shape[0], split=eigenvalues.split), eigenvalues), axis=1
-    )
+    eigenvalues, _ = ht.sort(eigenvalues)
+    eigenvalues = eigenvalues[0:50]
     eigenvalues = ht.resplit(eigenvalues, axis=None).numpy()
-    log_eigenvalues("eigenvalues")
+    log_eigenvalues(eigenvalues)
     logger.info("Sent eigenvalues")
 
     val_data, val_labels = load_data(

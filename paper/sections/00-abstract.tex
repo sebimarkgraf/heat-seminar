@@ -1,15 +1,15 @@
 \begin{abstract}
   Using unsupervised learning for datasets allows to extract information
   without the tedious task of labeling. Especially, on high-volume datasets
-  this provides a potential benefit.
+  this provides a potential time and cost saving benefit.
 
-  For processing of high-volume datasets the power of a single machine is
-  not sufficient. By distributing the work this can be substantially be
-  speedup. But due to the difficulty of writing distributed tasks
-  this should be encapsulated into libraries that transparently split the
+  For processing high-volume datasets the power of a single machine is
+  not sufficient. By distributing the work across the memory and compute power of multiple machines,
+  it is possible to laod bigger datasets and speedup the computation.
+  But due to the difficulty of writing distributed tasks this should be encapsulated into libraries that transparently split the
   data and work.
 
-  In this work we try to use HeAT on remote sensing data to find a classification
-  without using the labels. The result is then evaluated against the provided
-  labels.
+  In this work we try to use the HPC library HeAT on remote sensing data to find a clustering
+  without using the labels. The result of the clustering is than compared with the labels.
+  Additionally, the scaling behaviour of HeAT depending on the number of computing nodes is profiled.
 \end{abstract}

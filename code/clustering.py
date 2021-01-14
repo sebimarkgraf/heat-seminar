@@ -47,7 +47,7 @@ def only_root(func):
 
 def load_dataset(data_path: str, subset: str, dataset: str) -> ht.dndarray:
     path = f"{data_path}{subset}.h5"
-    return ht.load(path, dataset=dataset, split=0)
+    return ht.load(path, dataset=dataset)
 
 
 def take_percentage(dataset: ht.DNDarray, percentage: float) -> ht.DNDarray:
@@ -69,8 +69,7 @@ def load_data(datapath: str, subset: str, dataset: str, percentage: float):
     labels = load_dataset(data_path=datapath, subset=subset, dataset="label")
     dataset = take_percentage(dataset, percentage)
     labels = take_percentage(labels, percentage)
-    dataset.balance_()
-    labels.balance_()
+    dataset = ht.resplit(dataset, axis=0)
     return dataset, labels
 
 

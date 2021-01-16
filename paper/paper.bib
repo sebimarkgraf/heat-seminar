@@ -326,3 +326,60 @@ Section: Bulletin of the American Meteorological Society},
 	urldate = {2021-01-14},
 	file = {Open MPI\: Open Source High Performance Computing:/home/sebbo/Zotero/storage/383ZRH9S/www.open-mpi.org.html:text/html}
 }
+
+@inproceedings{bauer_legate_2019,
+	address = {Denver Colorado},
+	title = {Legate {NumPy}: accelerated and distributed array computing},
+	isbn = {978-1-4503-6229-0},
+	shorttitle = {Legate {NumPy}},
+	url = {https://dl.acm.org/doi/10.1145/3295500.3356175},
+	doi = {10.1145/3295500.3356175},
+	abstract = {NumPy is a popular Python library used for performing arraybased numerical computations. The canonical implementation of NumPy used by most programmers runs on a single CPU core and is parallelized to use multiple cores for some operations. This restriction to a single-node CPU-only execution limits both the size of data that can be handled and the potential speed of NumPy code. In this work we introduce Legate, a drop-in replacement for NumPy that requires only a single-line code change and can scale up to an arbitrary number of GPU accelerated nodes. Legate works by translating NumPy programs to the Legion programming model and then leverages the scalability of the Legion runtime system to distribute data and computations across an arbitrary sized machine. Compared to similar programs written in the distributed Dask array library in Python, Legate achieves speed-ups of up to 10X on 1280 CPUs and 100X on 256 GPUs.},
+	language = {en},
+	urldate = {2021-01-15},
+	booktitle = {Proceedings of the {International} {Conference} for {High} {Performance} {Computing}, {Networking}, {Storage} and {Analysis}},
+	publisher = {ACM},
+	author = {Bauer, Michael and Garland, Michael},
+	month = nov,
+	year = {2019},
+	pages = {1--23},
+	file = {Bauer and Garland - 2019 - Legate NumPy accelerated and distributed array co.pdf:/home/sebbo/Zotero/storage/2CPUFN2F/Bauer and Garland - 2019 - Legate NumPy accelerated and distributed array co.pdf:application/pdf}
+}
+
+@article{huang_spartan_nodate,
+	title = {Spartan: {A} {Distributed} {Array} {Framework} with {Smart} {Tiling}},
+	abstract = {Application programmers in domains like machine learning, scientiﬁc computing, and computational biology are accustomed to using powerful, high productivity array languages such as MatLab, R and NumPy. Distributed array frameworks aim to scale array programs across machines. However, maximizing the locality of access to distributed arrays is an unsolved problem; such locality is critical for high performance. This paper presents Spartan, a distributed array framework that automatically determines how to best partition (aka “tile”) ndimensional arrays and to co-locate data with computation to maximize locality. Spartan combines a lazy-evaluation based, optimizing frontend with a distributed tiled array backend. Central to Spartan’s design is a small number of carefully chosen parallel high-level operators, which form the expression graph captured by Spartan’s frontend during runtime. These operators simplify the programming of distributed applications. More importantly, their well-deﬁned semantics allow Spartan’s runtime to calculate the costs of different tiling strategies and pick the best one for evaluating the entire expression graph.},
+	language = {en},
+	author = {Huang, Chien-Chin and Chen, Qi and Wang, Zhaoguo and Power, Russell and Ortiz, Jorge and Li, Jinyang and Xiao, Zhen},
+	pages = {16},
+	file = {Huang et al. - Spartan A Distributed Array Framework with Smart .pdf:/home/sebbo/Zotero/storage/PAGX52F2/Huang et al. - Spartan A Distributed Array Framework with Smart .pdf:application/pdf}
+}
+
+@article{grigg_logic_1965,
+	title = {The {Logic} of {Regional} {Systems1}},
+	volume = {55},
+	issn = {1467-8306},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-8306.1965.tb00529.x},
+	doi = {https://doi.org/10.1111/j.1467-8306.1965.tb00529.x},
+	abstract = {It is argued in this paper that regionalization is a similar process to classification. The terminology and procedures of the two are compared and it is concluded that there is a close similarity except that there is no direct analogy in regionalization with the individual of classification. It is suggested that operationally defined individuals partially overcome this problem. The histories of ideas about the nature and purpose of regional systems and classification systems are briefly compared and again found to be similar. Ten principles of classification derived from the work of logicians and taxonomists are then stated and the methods of constructing regional systems are examined in the light of these principles. It is shown that most of the points revealed by such an examination have been previously discussed by geographers, although they are arguing from different premises. Some of the principles, however, do raise problems which have hitherto received little attention.},
+	language = {en},
+	number = {3},
+	urldate = {2021-01-16},
+	journal = {Annals of the Association of American Geographers},
+	author = {Grigg, David},
+	year = {1965},
+	note = {\_eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1467-8306.1965.tb00529.x},
+	pages = {465--491},
+	file = {Full Text PDF:/home/sebbo/Zotero/storage/Q6KCGPY6/Grigg - 1965 - The Logic of Regional Systems1.pdf:application/pdf;Snapshot:/home/sebbo/Zotero/storage/76X7PUQH/j.1467-8306.1965.tb00529.html:text/html}
+}
+
+@inproceedings{rosenberg_v-measure_2007,
+	title = {V-{Measure}: {A} {Conditional} {Entropy}-{Based} {External} {Cluster} {Evaluation} {Measure}.},
+	shorttitle = {V-{Measure}},
+	abstract = {We present V-measure, an external entropybased cluster evaluation measure. V-measure provides an elegant solution to many problems that affect previously defined cluster evaluation measures including 1) dependence on clustering algorithm or data set, 2) the "problem of matching", where the clustering of only a portion of data points are evaluated and 3) accurate evaluation and combination of two desirable aspects of clustering, homogeneity and completeness. We compare V-measure to a number of popular cluster evaluation measures and demonstrate that it satisfies several desirable properties of clustering solutions, using simulated clustering results. Finally, we use V-measure to evaluate two clustering tasks: document clustering and pitch accent type clustering.},
+	author = {Rosenberg, Andrew and Hirschberg, Julia},
+	month = jan,
+	year = {2007},
+	pages = {410--420},
+	file = {Full Text PDF:/home/sebbo/Zotero/storage/YQ5NI5H3/Rosenberg and Hirschberg - 2007 - V-Measure A Conditional Entropy-Based External Cl.pdf:application/pdf}
+}

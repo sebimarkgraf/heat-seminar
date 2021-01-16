@@ -3,11 +3,11 @@
 
 \subsection{Dataset Loading}
 \label{subsec:dataset_loading}
-The dataset is available as two HDF5 files. They both contain the sen1 and sen2 image patches as well as the labels
+The dataset is available as two HDF5 files. They both contain the Sentinel-1 and Sentinel-2 image patches as well as the labels
 corresponding to these images.
 To load them with \gls{HeAT} the HDF5 supports needs to be installed.
-The training dataset contains ... samples. The implementation can be configured to load
-the sen1 or sen2 dataset and choose a percentage of the dataset which should be loaded.
+The training dataset contains around \(350,000\) samples. The implementation can be configured to load
+the Sentinel-1 or Sentinel-2 dataset and choose a percentage of the dataset which should be loaded.
 This allows for easier testing and profiling of the scaling behaviour.
 
 
@@ -16,21 +16,21 @@ This allows for easier testing and profiling of the scaling behaviour.
 When loading the dataset the image patches are available in a shape of \[(num\_samples, channels, width, height)\].
 To use these in the clustering we need a feature vector for each sample instead of the nested information. Therefore,
 we aim for the shape \[(num\_samples, feature\_dim)\].
-When beginning the work on this project the reshape function of heat did not support the \(-1\) flag used to
+When beginning the work on this project the reshape function of \gls{HeAT} did not support the \(-1\) flag used to
 calculate the required size of the dimension and always forced communication of the whole dataset via \lstinline{MPI_AllToAllv}.
-Thererfore, our implementation uses a custom version of \(ht.flatten\) to achieve the correct shape.
-By now, the implementation of reshape has a fix for the \lstinline{MPI_AllToAllv} behaviour and supports \(-1\).
+Thererfore, our implementation uses a custom version of \lstinline{ht.flatten} to achieve the correct shape.
+By the time of finishing this report, the implementation of \lstinline{reshape} has a fix for the \lstinline{MPI_AllToAllv} behaviour and supports \(-1\).
 Thus, it is recommended to use \begin{lstlisting}[language=Python]
     ht.reshape(dataset, (dataset.shape[0], -1))
 \end{lstlisting}
-to flatten the features in the required shape.
+to flatten the features into the required shape.
 
 \subsection{Normalization}
 \label{subsec:normalization}
 Due to the channels being in different formats, it can be useful to normalize all channels.
 Therefore, channel wise z-Score normalization is implemented \cite{wooldridge_introductory_2012}:
 \[Z = \frac{X - \mu}{\sigma}\]
-Espeially when using small datasets, \(\sigma\) could be potentially \(0\) which leads to division by zero errors.
+Especially when using small datasets, \(\sigma\) could be potentially \(0\) which leads to division by zero errors.
 Therefore, the normlization can be deactivated for time profiling.
 
 \subsection{Logging}
@@ -39,6 +39,7 @@ For the whole project the default Python logging \cite{noauthor_pep_nodate} is u
 All important steps in the general dataflow output their beginning and their end on \lstinline{INFO} level.
 More specific information, especially about the shapes of the data after transformation is output to \lstinline{DEBUG}.
 Per default a console handler is attached that outputs all logging of all nodes to \lstinline{STDOUT}.
+Sadly, \gls{HeAT} does not implement standard library logging and therefore internal steps of the algorithms are not visible on the log files.
 For more information about the usage of Python logging refer to \cite{noauthor_pep_nodate}.
 
 
@@ -46,7 +47,7 @@ For more information about the usage of Python logging refer to \cite{noauthor_p
 \label{subsec:experiment_tracking}
 All runs are tracked with WanDB \cite{noauthor_weights_nodate}. Integrating WanDB with the script was not easy due
 to the fact that the tracking is not built for distributed systems. Therefore, only the root node should perform
-logging to the database.
+logging to the endpoint.
 Thus, only the root node loads the configuration from the disk and broadcasts the current configuration
 to all other nodes.
 Additionally, all logging methods are wrapped in a decorator, that only allows the root node to execute the function.
@@ -61,5 +62,5 @@ the cluster or running machine itself.
 \subsection{Timing}
 \label{subsec:timing}
 Only the fitting of the Spectral Clustering algorithm is timed. This is done by wrapping the fit call with a start
-and endtime. The prediction of labels for all elements is performed after the time measurement.
+and end time. The prediction of labels for all elements and any plotting is performed after the time measurement.
 Every run executes the algorithm multiple times to limit the influence of start up and loading effects.

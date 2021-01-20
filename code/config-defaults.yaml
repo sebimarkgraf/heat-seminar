@@ -33,13 +33,16 @@ assign_labels:
   value: 'kmeans'
 dataset_percentage:
   desc: Take part of the dataset (1.0 for full dataset)
-  value: 0.4
+  value: 0.1
 weak_scaling_max:
   desc: If not 0 uses int as max for weak scaling and overwrites dataset_percentage
-  value: 32
+  value: 0
 num_fittings:
   desc: Change the number of fittings that should be performed. Useful for profiling the fitting function
   value: 3
 normalize:
   desc: Activate to enable normalization of the data before clustering
+  value: True
+spectral_gap:
+  desc: Use spectral gap to determine the number of clusters
   value: False

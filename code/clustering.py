@@ -93,8 +93,13 @@ def flatten(dataset, labels):
 
 def cluster(dataset: ht.dndarray, config: dict) -> Tuple[ht.cluster.Spectral, np.array]:
     logger.debug("Starting clustering")
+    n_clusters = config["n_clusters"]
+    if config["spectral_gap"] is True:
+        logger.info("Using spectral gap to get number of clusters")
+        n_clusters = None
+
     c = ht.cluster.Spectral(
-        n_clusters=config["n_clusters"],
+        n_clusters=n_clusters,
         gamma=config["gamma"],
         metric=config["metric"],
         laplacian=config["laplacian"],
@@ -110,6 +115,8 @@ def cluster(dataset: ht.dndarray, config: dict) -> Tuple[ht.cluster.Spectral, np
         stop = time.perf_counter()
         log_compute_time(start, stop)
         logger.info(f"RUN {i} finished in {stop-start:.2f}s")
+
+    log_num_clusters(c.n_clusters)
     labels_pred = c.predict(dataset).squeeze()
     labels_pred = ht.resplit(labels_pred, axis=None).numpy()
 
@@ -117,7 +124,7 @@ def cluster(dataset: ht.dndarray, config: dict) -> Tuple[ht.cluster.Spectral, np
 
 
 @only_root
-def plot_label_compare(labels: np.array, labels_pred: np.array, config: dict):
+def plot_label_compare(labels: np.array, labels_pred: np.array):
     fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
     ax1.hist(labels_pred)
     ax1.set_title("Predicted")
@@ -126,9 +133,6 @@ def plot_label_compare(labels: np.array, labels_pred: np.array, config: dict):
     os.makedirs("plots", exist_ok=True)
 
     wandb.log({"label_compare": fig})
-    plt.savefig(
-        f"plots/{config['dataset']}_{config['subset']}_{config['n_clusters']}_{TIMESTAMP}_Label_Count.png"
-    )
     plt.close(fig)
 
 
@@ -158,6 +162,11 @@ def plot_cluster_composition(labels: np.array, labels_pred: np.array, config: di
 
 
 @only_root
+def log_num_clusters(n_clusters: int):
+    wandb.log({"determined clusters": n_clusters})
+
+
+@only_root
 def log_metrics(labels: np.array, labels_pred: np.array, prefix=""):
     logged_metrics = {
         f"{prefix}Adjusted Rand Index": metrics.adjusted_rand_score(
@@ -184,7 +193,6 @@ def log_eigenvalues(value: np.array):
 
 @only_root
 def plot_confusion(labels: np.array, labels_pred: np.array):
-
     cm = metrics.confusion_matrix(labels, labels_pred)
     logger.info(cm)
     wandb.log({"conf_mat": wandb.plot.confusion_matrix(labels_pred, labels)})
@@ -236,9 +244,9 @@ def main():
 
     logger.info(f"Shapes: {labels_pred.shape} {labels.shape}")
     log_metrics(labels, labels_pred)
-    plot_label_compare(labels, labels_pred, config)
+    plot_label_compare(labels, labels_pred)
     plot_confusion(labels, labels_pred)
-    plot_cluster_composition(labels, labels_pred, config)
+    # plot_cluster_composition(labels, labels_pred, config)
     logger.info("Training Finished")
 
     logger.info("Getting eigenvalues")

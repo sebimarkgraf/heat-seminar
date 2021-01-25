@@ -4,7 +4,7 @@
 
 \begin{figure*}
   \includegraphics[width=0.9\linewidth]{images/weak_scaling_chart.png}
-  \caption{Weak scaling behaviour of the Spectral Clustering algorithm.}\label{fig:weak_scaling}
+  \caption{Weak scaling behaviour of the spectral clustering algorithm.}\label{fig:weak_scaling}
 \end{figure*}
 
 
@@ -21,7 +21,8 @@ All nodes run only 1 \gls{MPI} process and use the \gls{PyTorch} threading.
 
 The results of the measurement can be seen in \cref{fig:strong_scaling}. As a baseline the same task was performed on 1 node and yielded a runtime of \(6489s\).
 No nodes between \(2\) and \(10\) could be run for the profiling due to the message size limitation of \gls{MPI}. This is one of the current weak points
-of \gls{HeAT} that should will be fixed in the future. But finding a workaround for the message limit takes a lot of time and effort.
+of \gls{HeAT} that will be fixed in the future.
+But finding a workaround for the message limit takes a lot of time and effort.
 Therefore, the graph only shows node runtimes above \(10\) nodes.
 
 Interestingly the strong scaling performance is close to optimal and sometimes (e.g. 14-28 and 1-10) even better.
@@ -33,10 +34,10 @@ The same can be suspected for the \(1\) node baseline, which performed consisten
 
 For testing of the weak scaling the load per node should stay constant. Therefore, we fixed the
 maximum number of nodes to 32.
-The maximum number of nodes got assigned the full dataset. All smaller number of nodes get the corresponding
-percentage of the dataset in relation to the maximum number of nodes. When calculating the percentage the runtime
+The maximum number of nodes work on the full dataset. All smaller number of nodes work on the corresponding
+percentage of the dataset in relation to the maximum number of nodes. When calculating the percentage, the runtime
 of the choosen algorithm has to be considered. Since spectral clustering is in the runtime of \(O(n^2)\) with \(n\) samples,
-we need to scale the fraction of the dataset squared as well.
+we need to scale the fraction of the dataset squared as well:
 \[percentage\_dataset = \left(\frac{nodes}{nodes_{max}}\right)^2\]
 
 All other parameters stayed the same as in the strong scaling case.
@@ -64,21 +65,21 @@ this would need to be confirmed in further works.
       Validation &   & \\
       \bottomrule
     \end{tabular}
-    \caption{Metrics of Clustering Result}
+    \caption{The calculated metrics of the clustering result.}
     \label{tab:clustering_results}
   \end{table}
 
   \begin{figure*}
     \centering
     \includegraphics[width=0.9\linewidth]{images/label_distribution.png}
-    \caption{Comparison of Label Distribution with Original Label Distribution}
+    \caption{Comparison of the label distribution with the original label distribution.}
     \label{fig:label_distribution}
   \end{figure*}
 
   \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{images/eigenvalues.png}
-    \caption{Sorted smallest 50 eigenvalues of the Spectral Clustering}
+    \caption{Sorted smallest 50 eigenvalues of the spectral clustering.}
     \label{fig:eigenvalues}
   \end{figure}
 
@@ -99,11 +100,11 @@ First, the \gls{LCZ} have been desinged on paper and were not extracted from dat
 the zones would all line up with any structure in the data itself.
 But, especially the land types could have been expected to line up with the zone specification.
 
-When taking a look at the eigenvalue spectrum in \cref{fig:eigenvalues} most of the eigenvalues seem very close togehter and
+When taking a look at the eigenvalue spectrum in \cref{fig:eigenvalues} most of the eigenvalues seem very close together and
 further explain the poor performance. The biggest gap in the eigenvalues is located at eigenvalue 3. This so called spectral gap
-implies 3 found clusters with spectral clustering.
+implies 3 found clusters with spectral clustering. Which are found using the spectral gap implementation in \gls{HeAT} as well.
 
-Last, spectral clustering has problems with high-dimensional data. This could be changed by using another approach, a specific version of spectral clustering
+Furthermore, spectral clustering has problems with high-dimensional data. This could be changed by using another approach, a specific version of spectral clustering
 or do feature extraction before clustering. Possible features could be channel-wise mean, deviation, maximum and minimum.
 
 \subsection{Problems when using HeAT}
@@ -118,10 +119,11 @@ This error is already fixed in the experimental build.
 Another important factor which was found while testing different configurations are the different implementations of \gls{MPI}.
 The first configuration used the Intel implementation of \gls{MPI}. Here it was possible to use any number of nodes as long as
 the memory was big enough to fit the distance matrix of the spectral clustering. Explicitely, the strong scaling configuration worked
-with nodes from \(3\) to \(32\). But, when using nodes that are not a power of \(2\) the algorithm failed with a unknown communication error in \gls{MPI}.
+with nodes from \(3\) to \(32\).
+But when using nodes that are not a power of \(2\) the algorithm failed with a unknown communication error in \gls{MPI}.
 To solve this problem the \gls{MPI} implementation was changed to the OpenMPI implementation.
 Here, nodes that are not a power of \(2\) are possible, but therefore nodes below \(10\) are limited by the message size length of \(2^{31} - 1\).
-This bug is confusing since the message length of \(2^{31} - 1\) is fixed according to the standard and stated in the documentation of the Intel implementation as well.
-
-A explanation could lie in different execution of the requested functionality by \lstinline{mpi4py}. This is the Python wrapper \gls{HeAT} uses to call
-\gls{MPI} functions. To test this hypothesis the called \gls{MPI} functions should be recorded and compared between the implementations.
+This behaviour seems to deviate from the standard message length of \(2^{31} - 1\).
+An explanation could lie in different execution of the requested functionality by \lstinline{mpi4py}.
+\gls{HeAT} uses this Python wrapper to call \gls{MPI} functions.
+Here, more in depth investigations should be performed, but were not possible due to time constraints.

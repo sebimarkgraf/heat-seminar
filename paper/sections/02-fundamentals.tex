@@ -13,11 +13,11 @@
 Many scientific fields use \gls{numpy} arrays as a basis for their calculation. Due to their implementation in the C language and their well designed
 Python interface, they are fast to use and easy to understand. But, \gls{numpy} arrays are only implemented for single node use.
 Multiple approaches to allow the use of \gls{numpy} arrays on multiple nodes have emerged.
-Some of them like \cite{bauer_legate_2019} add \gls{GPU} support as well, to leverage the speedup for some of the operations.
+Noticeably, \cite{bauer_legate_2019} adds \gls{GPU} support to speedup specific operations e.g. big matrix calcuations.
 
 The hardest part in distributed array computing lies in the distribution of the data. All implementations provide
 either the option to specify how the data should be distributed or even try to estimate the best distribution \cite{huang_spartan_nodate}.
-But all of them have in common, that the distribution of the data itself is encapsulated and hidden from the user.
+All options have a commonality in encapsulating and hiding the distribution of the data itself from the user.
 This allows ease of use, but can lead to drops in performance when the user executes non optimal operations.
 
 
@@ -26,40 +26,41 @@ This allows ease of use, but can lead to drops in performance when the user exec
 \gls{MPI} is a message-passing standard published from the Message-Passing Interface Forum. It is currently available in version 3.1 \cite{message_passing_interface_forum_mpi_2015}.
 \enquote{The goal of the Message-Passing-Interface, simply stated, is to develop a widely used standard for writing message-passing programs}\cite{message_passing_interface_forum_mpi_2015}.
 With this goal \gls{MPI} is today often used in \gls{HPC}, especially in Grid Computing. The standard interface allows to pass results or data between different processes or nodes.
-Due to \gls{MPI} being a standard multiple implementations exist, which support different versions of the standard.
-Some of these implementations OpenMPI \cite{noauthor_open_nodate} and Intel MPI \cite{noauthor_intel_nodate}, which are available on our compute ressources.
+Due to \gls{MPI} being a standard multiple implementations exist. Not all of the implementations are available for all systems and support all versions of the standard.
+OpenMPI \cite{noauthor_open_nodate} and Intel MPI \cite{noauthor_intel_nodate} can be cited as examples, both are available on our compute ressources.
 \gls{MPI} has some limitations that should be remembered when using it with big data sets. The most important limitation is the maximum message size, due to the size
 being specified as an integer. Therfore, the maximum number of values that can be passed is \(2^{31} - 1\). Bigger messages need to be split in multiple messages or workarounds need to be implemented.
 
-\subsection{HEAT}
+\subsection{HeAT}
 \label{subsec:heat}
-\gls{HeAT} is introduced in \cite{krajsek_helmholtz_nodate}. \gls{HeAT} aims to be a mathemtical library for distributed computations.
-It conforms to a \gls{numpy} \cite{noauthor_numpy_nodate} interface and makes all distributed calculations transparent. To move from executing \gls{HeAT} scripts single threaded to executing them parallel
-or distributed one just needs to change the execution command to \gls{MPI}.
+\gls{HeAT} is introduced in \cite{krajsek_helmholtz_nodate}. \gls{HeAT} aims to be a mathematical library for distributed computations.
+It conforms to a \gls{numpy} \cite{noauthor_numpy_nodate} interface and makes all distributed calculations transparent.
+After executing \gls{HeAT} scripts single threaded during development, executing them parallel on a cluster is done by executing the same script with \gls{MPI}.
+Ideally, no changes to the code itself should be necessary.
 This is due to \gls{HeAT} wrapping \gls{PyTorch} as implementation with the correct \gls{MPI} synchronization to distribute the calculation.
 
 To perform the calculation distributed correctly \gls{HeAT} adds a new data structure: the DNDArray. Users of other libraries
 recognize the general interface of Numpy arrays or PyTorch Tensors, but extended by a split parameter.
 The split parameter allows to control the axis, which the data is distributed across.
-The developers decided to allow only 1 split axis to keep the development effort manageable.
+The developers decided to allow only one split axis to keep the development effort manageable.
 
-Although, the distribution is transparent besides the split parameter several pitfalls exist.
-When reshaping or splicing the dataset one has to potentially rebalance the dataset. Additionally, this could incurr communication effort
+The usage of the split parameter to control the distribution has some pitfalls for developers.
+When reshaping or splicing the dataset one has to potentially rebalance the dataset. Additionally, this could incur communication effort
 to redistribute the dataset across the nodes.
-Another pitfalls especially for developers comming from the distributed programming, lies in all processes needing to call all \gls{HeAT} methods.
+Other unexpected behaviour especially for developers already having distributed computing experience is the need of all processes to call all \gls{HeAT} methods.
 While in traditional \gls{MPI} one discriminates between the processes based on the rank, in \gls{HeAT} all nodes need to access all functions and DNDArrays or the
 programm could lockup.
 
-Lastly, \gls{HeAT} provides the load utility for distributed loading of datasets. Through the usage of all nodes at the same time \gls{IO} is maximized and the data
-is splitted already during loading. Therefore, calculations can start right away without the need to distribute the data.
-\cite{krajsek_helmholtz_nodate}
+Furthermore, \gls{HeAT} provides the load utility for distributed loading of datasets. Through the usage of all nodes at the same time \gls{IO} is maximized and the data
+is splitted already during loading. Therefore, calculations can start right away without the need to distribute the data
+\cite{krajsek_helmholtz_nodate}.
 
 
 \subsection{Local Climate Zone Classification}
 \label{subsec:local_climate_zone_classification}
 
 \glspl{LCZ} are a scheme formally proposed by \citeauthor{stewart_local_2012} in \cite{stewart_local_2012}. The scheme classifies areas based on fabric, land cover, structure
-and metabolism into one of 17 \gls{LCZ}s. \cite{xue_applications_2020}
+and metabolism into one of 17 \gls{LCZ}s \cite{xue_applications_2020}.
 The \gls{LCZ}s are decided by 4 components:
 \begin{enumerate}
   \item Height of roughness features
@@ -68,7 +69,7 @@ The \gls{LCZ}s are decided by 4 components:
   \item Thermal admittance of materials
 \end{enumerate}
 The different classes can be seen in \cref{fig:lcz_classes}.
-The \glspl{LCZ} were introduced to get more explainable and general divisions of the suburban ares. They are complex and diverse which make temperature and other climate analysis harder
+The \glspl{LCZ} were introduced to get more explainable and general divisions of the suburban areas. They are complex and diverse which make temperature and other climate analysis harder
 to understand and explain without a system. According to \citeauthor{stewart_local_2012}, the system fullfills all criteria of a logical local system as defined in \cite{grigg_logic_1965}.
 Their work adds guidelines on how to classify an area correctly into their zones and how to use them afterwards.
 
@@ -104,13 +105,13 @@ The labels consist of integers representing the 17 different \glspl{LCZ}. 52 cit
 \enquote{Spectral Clustering is the process of partitioning data samples into
 \(k\) groups based on graph theory} \cite{krajsek_helmholtz_nodate}. Therefore,
 to derive the formulation of Spectral Clustering we introduce the undirected graph \(G=(V, E)\).
-We consider the graph as weighted by assigning each edge an weight \(w_{ij}\). As the graph
-is unidrectional, the weight is identical for \(w_{ij} = w_{ji} \).
+We consider the graph as weighted by assigning each edge a weight \(w_{ij}\). As the graph
+is unidirectional, the weight is identical for \(w_{ij} = w_{ji} \).
 % Degree Matrix
 We define the degree of a vertex \(v_i \in V\) by iterating over all vertices \(v_j \in V\) that are connected to \(v_i\).
 Therefore, the weight of the edge is positive:
 \[d_i = \sum_{j=1}^n w_{ij}\]
-Using the degree defined before, we define the degree matrix \(D\) as the diagonal matrix with the degrees \(d_1, \ldots, d_n\) on the diagonal.
+Using the preceding definition, we set the degree matrix \(D\) as the diagonal matrix with the degrees \(d_1, \ldots, d_n\) on the diagonal.
 \cite{von_luxburg_tutorial_2007}
 % Weights Matrix
 For 2 subsets of indices \(A, B\) we define the weights matrix \cite{von_luxburg_tutorial_2007}:
@@ -120,16 +121,16 @@ For 2 subsets of indices \(A, B\) we define the weights matrix \cite{von_luxburg
 There are several possible ways to construct such a similarity graph from two datasets.
 The following three are used often for spectral clustering:
 \begin{itemize}
-  \item Fully connected
+  \item fully connected
   \item k-nearest neighbour
   \item \(\epsilon\)-neighbourhood
 \end{itemize}
 The fully connected graph considers the similarity between all samples. The graph should model the local neighbours and is therefore only useful when the distance function
 models the width of the neighbourhood.
-The k-nearest neighbour graph can be implemented in two ways. If we just use the defintion of the k-nearest neighbours we would receive an directed graph.
-To convert this into a undirected graph we can decide between connecting both vertices if one of them is a k-nearest neighbour of the other or connecting them if both vertices are nearest neighbours of each other.
-Last, the \(\epsilon\)-neighbourhood graph only connects vertices that are closer than \(\epsilon\).
-Since, this option already models the neighbourhood directly it usually is considered as an unweighted graph. \cite{von_luxburg_tutorial_2007}
+The k-nearest neighbour graph can be implemented in two ways. If we just use the defintion of the k-nearest neighbours we would receive a directed graph.
+To convert this into an undirected graph we can decide between connecting both vertices if one of them is a k-nearest neighbour of the other or connecting them if both vertices are nearest neighbours of each other.
+The \(\epsilon\)-neighbourhood graph only connects vertices that are closer than \(\epsilon\).
+Since this option already models the neighbourhood directly, it usually is considered as an unweighted graph. \cite{von_luxburg_tutorial_2007}
 According to \cite{von_luxburg_tutorial_2007} there is no theoretical work on the choosing of one method over
 another.
 
@@ -139,7 +140,7 @@ This is done by constructing the laplacian defined via
 using \(W, D\) as defined earlier.
 
 The Lanczos algorithm \cite{lanczos_iteration_1950} is used to calculate the eigenvalues and eigenvectors from the laplacian.
-When using the \(k\) smallest eigenvalues and the korresponding eigenvectors \(e_1, \ldots, e_k\) we can embed the dataset.
+When using the \(k\) smallest eigenvalues and the corresponding eigenvectors \(e_1, \ldots, e_k\) we can embed the dataset.
 
 Now a clustering can be performed in the smaller embedding space of the eigenbasis using another algorithm, e.g. KMeans.
 The overall algorithm can be found in algorithm \ref{alg:basic_spectral}.
@@ -162,7 +163,7 @@ The euclidean distance is a well known way to measure the distance. The euclidea
 \[
   d\left(X, X'\right) = \sqrt{{(x_1' - x_1)}^2 + \ldots + {(x_n' - x_n)}^2}
 \]
-It is fast and easy to calculate, but it allows only for linear separatation with most algorithms.
+It is fast and easy to calculate, but it is limited to  linear separation with most algorithms.
 
 \subsubsection{Radial Basis Function Kernel}
 The RBF kernel is a kernel that wraps the euclidean distance \(d\) \cite{vert_primer_2004}:
@@ -177,11 +178,12 @@ It allows to seperate non-linear data with many algorithms.
 \label{subsec:clustering_evaluation_metrics}
 
 Evaluating clusters is more complicated than evaluating classification or other supervised machine learning tasks.
-Unsupervised tasks can be evaluated using interal or external metrics. While, internal metrics are derived from the algorithm itself e.g. Cluster purity, external metrics are calculated from the comparison with given labels.
+Unsupervised tasks can be evaluated using interal or external metrics.
+While internal metrics, e.g. cluster purity, are derived from the result of the algorithm itself, external metrics are calculated from the comparison with given labels.
 
-Since the in \cref{subsec:so2sat} exaplained dataset contains labels, this section is going to focus on external metrics.
+Since the in \cref{subsec:so2sat} explained dataset contains labels, this section is going to focus on external metrics.
 For the here presented metrics we define \(C\) as the ground truth classes and \(K\) as the clustering assignment.
-ON this basis we define the following:\\
+On this basis we define the following:\\
 \(a\) - the number of pairs of elements that are in the same set in \(C\) and in the same set in \(K\)\\
 \(b\) - the number of pairs of elements that are in different sets in \(C\) and in different sets in \(K\)\\
 
@@ -203,12 +205,12 @@ Homogenity measures if only data points of a single class are assigned to a sing
 a single cluster.
 When combining these two with \(\beta\) we get the V-Measure \cite{noauthor_23_2020}:
 \[v = \frac{(1 + \beta) \times \mathit{Homogenity} \times \mathit{Completeness}}{\beta \times \mathit{Homogenity} + \mathit{Completeness}}\]
-Depending on the value for \(\beta\) we put more weights on Homogenity or Completeness. The usual value for \(\beta\) is \(1.0\) which weights both components equally.
+Depending on the value of \(\beta\) we put more weights on Homogenity or Completeness. The usual value of \(\beta\) is \(1.0\) which weights both components equally.
 The measurement is symmetric and bounded between \(0\) and \(1\), the later being the perfect achievable score.
 
 
 
 \begin{figure*}
   \includegraphics[width=0.9\linewidth]{images/strong_scaling_chart.png}
-  \caption{Strong scaling behaviour of the Spectral Clustering algorithm. Baseline of 1 node with \(6489s\) excluded for visual purposes.}\label{fig:strong_scaling}
+  \caption{Strong scaling behaviour of the spectral clustering algorithm.}\label{fig:strong_scaling}
 \end{figure*}

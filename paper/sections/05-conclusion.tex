@@ -4,8 +4,8 @@ This work used Spectral Clustering on the remote sensing data of SO2Sat to perfo
 All calculations were performed with \gls{HeAT} on a compute cluster.
 
 Looking at the clustering results, the goal of learning unsupervised was not successful.
-No local climate zones could be recognized from the found clusters. This is not to surprising as the \gls{LCZ}  are defined
-manually instead of existing in the structure of the data itself.
+No local climate zones could be recognized from the found clusters.
+This result was expected as the \gls{LCZ}  are defined manually instead of existing in the structure of the data itself.
 
 The performance of \gls{HeAT} was profiled as well.
 The strong scaling of the spectral clustering algorithm performs extremely good.
@@ -18,7 +18,7 @@ Still, the strong scaling shows that the compute that comes with more nodes is m
 
 If more time was available the clustering results would be the next focus.
 With the knowledge of the good scaling behaviour, a grid search with a part of the dataset could be performed.
-Especially, the gamma parameter of the radial basis function kernel and the epsilon of an epsilon-Neighbourhood graph, allow a lot of optimization.
+Especially, the gamma parameter of the radial basis function kernel and the \(epsilon\) of an \(\epsilon\)-neighbourhood graph, allow a lot of optimization.
 Additionally, the spectral clustering algorithm could try to guess the number of clusters using the spectral gap to get a more natural clustering.
 Another approach that was considered, but dropped due to time constraints, was the clustering on a subset of the channels.
 Maybe, clustering only the RGB channels or another combination could be better when keeping the curse of dimensionality in mind.

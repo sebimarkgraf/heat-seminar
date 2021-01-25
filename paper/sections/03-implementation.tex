@@ -13,9 +13,9 @@ This allows for easier testing and profiling of the scaling behaviour.
 
 \subsection{Feature Reshaping}
 \label{subsec:feature_reshaping}
-When loading the dataset the image patches are available in a shape of \[(num\_samples, channels, width, height)\].
+When loading the dataset the image patches are available in a shape of \[(num\_samples, channels, width, height)\]
 To use these in the clustering we need a feature vector for each sample instead of the nested information. Therefore,
-we aim for the shape \[(num\_samples, feature\_dim)\].
+we aim for the shape \[(num\_samples, feature\_dim)\]
 When beginning the work on this project the reshape function of \gls{HeAT} did not support the \(-1\) flag used to
 calculate the required size of the dimension and always forced communication of the whole dataset via \lstinline{MPI_AllToAllv}.
 Thererfore, our implementation uses a custom version of \lstinline{ht.flatten} to achieve the correct shape.
@@ -28,7 +28,7 @@ to flatten the features into the required shape.
 \subsection{Normalization}
 \label{subsec:normalization}
 Due to the channels being in different formats, it can be useful to normalize all channels.
-Therefore, channel wise z-Score normalization is implemented \cite{wooldridge_introductory_2012}:
+Therefore, channelwise z-score normalization is implemented \cite{wooldridge_introductory_2012}:
 \[Z = \frac{X - \mu}{\sigma}\]
 Especially when using small datasets, \(\sigma\) could be potentially \(0\) which leads to division by zero errors.
 Therefore, the normlization can be deactivated for time profiling.
@@ -36,16 +36,16 @@ Therefore, the normlization can be deactivated for time profiling.
 \subsection{Logging}
 \label{subsec:logging}
 For the whole project the default Python logging \cite{noauthor_pep_nodate} is used.
-All important steps in the general dataflow output their beginning and their end on \lstinline{INFO} level.
+All important steps print their beginning and their end on \lstinline{INFO} level.
 More specific information, especially about the shapes of the data after transformation is output to \lstinline{DEBUG}.
 Per default a console handler is attached that outputs all logging of all nodes to \lstinline{STDOUT}.
-Sadly, \gls{HeAT} does not implement standard library logging and therefore internal steps of the algorithms are not visible on the log files.
+\gls{HeAT} does not implement standard library logging and therefore internal steps of the algorithms are not visible on the log files.
 For more information about the usage of Python logging refer to \cite{noauthor_pep_nodate}.
 
 
 \subsection{Experiment Tracking}
 \label{subsec:experiment_tracking}
-All runs are tracked with WanDB \cite{noauthor_weights_nodate}. Integrating WanDB with the script was not easy due
+All runs are tracked with WanDB \cite{noauthor_weights_nodate}. Integrating WanDB with the script was difficult due
 to the fact that the tracking is not built for distributed systems. Therefore, only the root node should perform
 logging to the endpoint.
 Thus, only the root node loads the configuration from the disk and broadcasts the current configuration
@@ -54,7 +54,7 @@ Additionally, all logging methods are wrapped in a decorator, that only allows t
 Due to the configuration being tracked as well, it is easily possible to sort all runs and filter if they crashed or
 compare runs with similar configuration.
 
-One has to be careful when the script crashes due to \gls{MPI} errors. Since, \gls{MPI} errors are thrown
+One has to be careful when the script crashes due to \gls{MPI} errors. Since \gls{MPI} errors are thrown
 below the Python level and the tracking runs on the Python level, there are no signs of an error when looking only at
 the tracking. This is caused by the design and cannot be circumvented. It is advisable to check runs regulary on
 the cluster or running machine itself.

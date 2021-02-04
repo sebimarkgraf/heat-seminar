@@ -6,19 +6,22 @@ All calculations were performed with \gls{HeAT} on a compute cluster.
 Looking at the clustering results, the goal of learning unsupervised was not successful.
 No local climate zones could be recognized from the found clusters.
 This result was expected as the \gls{LCZ}  are defined manually instead of existing in the structure of the data itself.
+Another explanation could be the usage of RBF distances for image data. The machine learning world has turned to convolutional neural network
+for some years when working with image data. Pixel wise RBF or euclidean distances alone are not really able to recognize the similarity or dissimilarity
+of the different groups and cannot find an adequately clustering.
 
 The performance of \gls{HeAT} was profiled as well.
 The strong scaling of the spectral clustering algorithm performs extremely good.
 Therefore, using larger number of nodes can lead to short compute times.
-When using a compute cluster this is usually a trade-off between waiting time for more ressources and the compute time of the algorithm.
+When using a compute cluster this is usually a trade-off between waiting time for more resources and the compute time of the algorithm.
 A relevant point lies in the amount of memory that is necessary for spectral clustering. Due to calculation of the distance matrix
 the algorithm uses \(O(n^2)\) memory.
 Therefore, the number of compute nodes to use is limited to the bottom by the needed memory.
 Still, the strong scaling shows that the compute that comes with more nodes is more useful, than calculating the algorithm on one fat node.
 
 If more time was available the clustering results would be the next focus.
-With the knowledge of the good scaling behaviour, a grid search with a part of the dataset could be performed.
-Especially, the gamma parameter of the radial basis function kernel and the \(epsilon\) of an \(\epsilon\)-neighbourhood graph, allow a lot of optimization.
+With the knowledge of the good scaling behavior, a grid search with a part of the dataset could be performed.
+Especially, the gamma parameter of the radial basis function kernel and the \(epsilon\) of an \(\epsilon\)-neighborhood graph, allow a lot of optimization.
 Additionally, the spectral clustering algorithm could try to guess the number of clusters using the spectral gap to get a more natural clustering.
 Another approach that was considered, but dropped due to time constraints, was the clustering on a subset of the channels.
 Maybe, clustering only the RGB channels or another combination could be better when keeping the curse of dimensionality in mind.

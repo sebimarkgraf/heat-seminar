@@ -3,12 +3,12 @@
 
 \subsection{Dataset Loading}
 \label{subsec:dataset_loading}
-The dataset is available as two HDF5 files. They both contain the Sentinel-1 and Sentinel-2 image patches as well as the labels
-corresponding to these images.
-To load them with \gls{HeAT} the HDF5 supports needs to be installed.
-The training dataset contains around \(350,000\) samples. The implementation can be configured to load
-the Sentinel-1 or Sentinel-2 dataset and choose a percentage of the dataset which should be loaded.
-This allows for easier testing and profiling of the scaling behaviour.
+The dataset is available as two \gls{HDF5} files, representing a training - validation split.
+Both parts of the dataset contain a part the Sentinel-1 and Sentinel-2 image patches as well as the labels corresponding to these images.
+To load them with \gls{HeAT} the \gls{HDF5} supports needs to be installed.
+The training subset contains around \(350\,000\) samples.
+The implementation can be configured to load the Sentinel-1 or Sentinel-2 dataset and choose a percentage of the dataset which should be loaded.
+This allows for easier testing and profiling of the scaling behavior.
 
 
 \subsection{Feature Reshaping}
@@ -16,14 +16,14 @@ This allows for easier testing and profiling of the scaling behaviour.
 When loading the dataset the image patches are available in a shape of \[(num\_samples, channels, width, height)\]
 To use these in the clustering we need a feature vector for each sample instead of the nested information. Therefore,
 we aim for the shape \[(num\_samples, feature\_dim)\]
-When beginning the work on this project the reshape function of \gls{HeAT} did not support the \(-1\) flag used to
-calculate the required size of the dimension and always forced communication of the whole dataset via \lstinline{MPI_AllToAllv}.
-Thererfore, our implementation uses a custom version of \lstinline{ht.flatten} to achieve the correct shape.
-By the time of finishing this report, the implementation of \lstinline{reshape} has a fix for the \lstinline{MPI_AllToAllv} behaviour and supports \(-1\).
-Thus, it is recommended to use \begin{lstlisting}[language=Python]
-    ht.reshape(dataset, (dataset.shape[0], -1))
-\end{lstlisting}
-to flatten the features into the required shape.
+
+Before reshaping the data is already split into batches of samples onto different nodes. Therefore, when flattening the channels of a sample, no communication should be incurred.
+This proved to be more difficult than anticipated. The \gls{numpy} reshape function allows to specify \(-1\) for a dimension that should be automatically calculated.
+\gls{HeAT} did not have this option at the beginning of this work.
+Additionally, reshape was not optimized for operations that could occur locally and always performed communication even
+if it was not necessary in this case. After communicating both of these wishes, the \gls{HeAT} team provided support for the \(-1\) notation and
+implemented a fix for the additional communication.
+For a workaround during the development time, the implementation used a custom version of \lstinline{ht.flatten} to perform the necessary operation.
 
 \subsection{Normalization}
 \label{subsec:normalization}
@@ -31,7 +31,7 @@ Due to the channels being in different formats, it can be useful to normalize al
 Therefore, channelwise z-score normalization is implemented \cite{wooldridge_introductory_2012}:
 \[Z = \frac{X - \mu}{\sigma}\]
 Especially when using small datasets, \(\sigma\) could be potentially \(0\) which leads to division by zero errors.
-Therefore, the normlization can be deactivated for time profiling.
+Therefore, the normalization can be deactivated for time profiling.
 
 \subsection{Logging}
 \label{subsec:logging}
@@ -64,3 +64,17 @@ the cluster or running machine itself.
 Only the fitting of the Spectral Clustering algorithm is timed. This is done by wrapping the fit call with a start
 and end time. The prediction of labels for all elements and any plotting is performed after the time measurement.
 Every run executes the algorithm multiple times to limit the influence of start up and loading effects.
+
+\subsection{bwUniCluster}
+\label{subsec:bw_uni_cluster}
+The bwUniCluster 2.0 was commissioned on the 17.03.2020 by the \gls{SCC} \cite{haefner_kit_2020}.
+It is part of the framework of the \gls{bwHPC}. In total the cluster has 848 nodes.
+The fat and high throughput compute nodes are connected via InifiBand HDR100, which has a throughput of 100 Gbit/s.
+The connection to the storage is done via InifiBand EDR.
+The cluster provides 24 compute nodes with \glspl{GPU}.
+
+Scheduling of jobs on the system is done with \gls{SLURM} \cite{yoo_slurm_2003}.
+\gls{SLURM} allows to specify the required resources for a job and schedules it for an available time slot.
+The specification is mainly done through partitions which group a specific type of node, e.g. fat nodes, multiple nodes, \gls{GPU} nodes.
+Depending on the chosen partition the user can configure different requirements regarding the number of nodes, memory and needed time.
+This work uses the multiple partition for most tasks and the fat partition for running jobs on single nodes.

@@ -10,7 +10,7 @@
 
 \subsection{Distributed Array Computation}
 \label{subsec:distributed_array_computation}
-Many scientific fields use \gls{numpy} as a basis for their calculation. Due to their implementation in the C language and their well designed
+Many scientific fields use \gls{numpy} as a basis for their calculation. Due to its implementation in the C language and its well designed
 Python interface, the computation is fast but easy to write. But, \gls{numpy} arrays are only implemented for single node use.
 
 Multiple libraries which allow the use of \gls{numpy} computations on multiple nodes have emerged: \cite{bauer_legate_2019}, \cite{huang_spartan_nodate}, \cite{krajsek_helmholtz_nodate}.
@@ -29,7 +29,7 @@ This allows ease of use, but can lead to drops in performance when the user exec
 \gls{MPI} is today widely used in \gls{HPC}, especially in Grid Computing. The standard interface allows to pass results or data between different processes or nodes.
 Due to \gls{MPI} being a standard multiple implementations exist. Not all of the implementations are available for all systems and support all versions of the standard.
 OpenMPI \cite{noauthor_open_nodate} and Intel MPI \cite{noauthor_intel_nodate} can be cited as examples, which are used in this work.
-\gls{MPI} has some limitations that should be remembered when using it with big data sets. The most important limitation is the maximum message size, due to the size
+\gls{MPI} has some limitations that should be remembered when using it with big datasets. The most important limitation is the maximum message size, due to the size
 being specified as an integer. Therefore, the maximum number of values that can be passed is \(2^{31} - 1\). Bigger messages need to be split in multiple messages or workarounds need to be implemented.
 
 \subsection{HeAT}
@@ -40,7 +40,7 @@ After executing \gls{HeAT} scripts single threaded during development, executing
 When used correctly, no changes to the code itself are necessary.
 This is due to \gls{HeAT} wrapping \gls{PyTorch} as implementation with the correct \gls{MPI} synchronization to distribute the calculation.
 
-To perform the calculation distributed correctly \gls{HeAT} adds a new data structure: the \gls{DNDarray}.
+To correctly perform the distributed calculation \gls{HeAT} adds a new data structure: the \gls{DNDarray}.
 For a user accustomed to other libraries, the \gls{HeAT} API feels familiar, as it employs the general \gls{numpy} and \gls{PyTorch} tensor syntax
 but introduces a split parameter.
 The split parameter allows to control the axis, which the data is distributed across.
@@ -71,19 +71,18 @@ The \gls{LCZ}s are decided by 4 components:
   \item Thermal admittance of materials
 \end{enumerate}
 The different classes can be seen in \cref{fig:lcz_classes}.
-The \glspl{LCZ} were introduced to get more explainable and general divisions of the suburban areas.
-The suburban areas are complex and diverse which makes temperature and other climate analysis harder
-to understand and explain without a system.
+Suburban areas are complex and diverse which makes temperature and climate analysis hard to specify, therefor
+\glspl{LCZ} were introduced to get more explainable and understandable divisions of those areas.
 According to \citeauthor{stewart_local_2012}, the system fulfills all criteria of a logical local system as defined in \cite{grigg_logic_1965}.
 Their work adds guidelines on how to classify an area correctly into their zones and how to use them afterwards.
-These guidelines allow to keep a consistent labelling and create data sets with these labels.
+These guidelines allow to keep a consistent labelling and create datasets with these labels.
 
 
 \subsection{SO2Sat}
 \label{subsec:so2sat}
 \citeauthor{zhu_so2sat_2019} presented the SO2Sat dataset in \cite{zhu_so2sat_2019}.
 They describe SO2Sat as a \enquote{valuable benchmark dataset \textelp{}, which consists of local climate zone (LCZ) labels of about half a million \textelp{} image patches}.
-These images from 52 different cities are taken from the ESA satellites Sentinel-1 and Sentinel-2. Each image is 32 by 32 pixels and contains 8 channels for Sentinel-1 and 10 channels for Sentinel-2.
+These images from the 42 different main cities are taken from the \gls{ESA} satellites Sentinel-1 and Sentinel-2. Each image is 32 by 32 pixels and contains 8 channels for Sentinel-1 and 10 channels for Sentinel-2.
 After preprocessing these images they were given to domain experts for labelling which followed a \enquote{carefully designed labelling work flow} \cite{zhu_so2sat_2019}.
 Through the careful work the dataset achieved a \enquote{overall confidence of 85\%} \cite{zhu_so2sat_2019}.
 The labels consist of integers representing the 17 different \glspl{LCZ}.
@@ -108,9 +107,9 @@ The labels consist of integers representing the 17 different \glspl{LCZ}.
   \caption{Basic Spectral Clustering}\label{alg:basic_spectral}
  \end{algorithm}
 
-\enquote{Spectral Clustering is the process of partitioning data samples into
+\enquote{Spectral clustering is the process of partitioning data samples into
 \(k\) groups based on graph theory} \cite{krajsek_helmholtz_nodate}. Therefore,
-to derive the formulation of Spectral Clustering we introduce the undirected graph \(G=(V, E)\) with edges \(E\) and nodes \(V\).
+to derive the formulation of Spectral Clustering we introduce the undirected graph \(G=(V, E)\) with nodes \(V\) and edges \(E\).
 We consider the graph as weighted by assigning each edge a weight \(w_{ij}\). As the graph
 is unidirectional, the weight is identical for \(w_{ij} = w_{ji} \).
 % Degree Matrix
@@ -124,7 +123,8 @@ For two subsets of indices \(A, B\) we define the weights matrix \cite{von_luxbu
 \[W(A, B) := \sum_{i \in A, j \in B} w_{ij}\]
 
 
-There are several possible ways to construct such a similarity graph from two datasets.
+The core element of spectral clustering is a similarity graph describing the similarity between different elements of the dataset.
+There are several possible ways to construct a similarity graph fulfilling the mentioned criteria of an unidirectional graph.
 The following three are used often for spectral clustering:
 \begin{itemize}
   \item fully connected
@@ -134,7 +134,7 @@ The following three are used often for spectral clustering:
 The fully connected graph considers the similarity between all samples. The graph should model the local neighbors and is therefore only useful when the distance function
 models the width of the neighborhood.
 The k-nearest neighbor graph can be implemented in two ways. If we just use the definition of the k-nearest neighbors we would receive a directed graph.
-To convert this into an undirected graph we can decide between connecting both vertices if one of them is a k-nearest neighbor of the other or connecting them if both vertices are nearest neighbours of each other.
+To convert this into an undirected graph we can decide between connecting both vertices if one of them is a k-nearest neighbor of the other or connecting them if both vertices are nearest neighbors of each other.
 The \(\epsilon\)-neighborhood graph only connects vertices whose similarity is smaller than \(\epsilon\).
 Since this option already models the neighborhood directly, it usually is considered as an unweighted graph. \cite{von_luxburg_tutorial_2007}
 According to \cite{von_luxburg_tutorial_2007} there is no theoretical work on the choosing of one method over
@@ -157,12 +157,12 @@ The overall algorithm can be found in algorithm \ref{alg:basic_spectral}.
   \label{fig:spectral_example}
 \end{figure}
 
-One of the most common examples for spectral clustering can be seen in \cref{fig:spectral_example} \cite{noauthor_23_2020}. Spectral Clustering is able to
+One of the most common examples for spectral clustering can be seen in \cref{fig:spectral_example} \cite{noauthor_23_2020}. Spectral clustering is able to
 separate the nonlinear datasets. This is often compared with KMeans which fails to correctly recognize the different clusters when using the euclidean distance.
 
 \subsection{Distance Metrics}
 \label{subsec:distance_metrics}
-For the spectral clustering the distance between samples needs to be measured. Depending on the data different ways to measure the distance are implemented in \gls{HeAT}.
+For spectral clustering the distance between samples needs to be measured. Depending on the data different ways to measure the distance are implemented in \gls{HeAT}.
 
 \subsubsection{Euclidean Distance}
 The euclidean distance is a well known way to measure the distance. The euclidean distance of two points \(X = (x_1, \ldots, x_n ), X' = (x_1', \ldots, x_n')\) is commonly defined  as:
@@ -213,7 +213,7 @@ Homogenity measures if only data points of a single class are assigned to a sing
 a single cluster.
 When combining these two with \(\beta\) we get the V-Measure \cite{noauthor_23_2020}:
 \[v = \frac{(1 + \beta) \times \mathit{homogenity} \times \mathit{completeness}}{\beta \times \mathit{homogenity} + \mathit{completeness}}\]
-Depending on the value of \(\beta\) we put more weights on homogenity or completeness. The usual value of \(\beta\) is \(1.0\) which weights both components equally.
+Depending on the value of \(\beta\) we put more weight on homogenity or completeness. The usual value of \(\beta\) is \(1.0\) which weights both components equally.
 The measurement is symmetric and bounded between \(0\) and \(1\), the later being the perfect achievable score.
 
 

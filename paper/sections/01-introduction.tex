@@ -1,17 +1,17 @@
 
 \section{Introduction}
 \label{sec:intro}
-\IEEEPARstart{F}{or}  quite some time the computing power is growing exponentially \cite{moore_cramming_1998}, but the data sets are growing extremely fast as well.
+\IEEEPARstart{F}{or}  quite some time the computing power is growing exponentially \cite{moore_cramming_1998}, but the datasets are growing extremely fast as well.
 Collecting data is easier nowadays, especially through the vast amount of online services.
 Although, this allows machine learning algorithms to be more and more precise, there are downsides arising as well with
 the increased size \cite{khan_big_2014}.
 
-To store the datasets the storage capacity needs to increase by the same amount. More importantly, the computing power needs to increase
+To store the datasets the storage capacity needs to expand by the same amount. More importantly, the computing power needs to increase
 as well. To optimally leverage the increase in computing power efficient algorithms are developed.
 Especially, when using \glspl{GPU} this is not an easy task. To help with the task many libraries were created e.g. PyTorch.
 \gls{PyTorch} provides efficiently implemented mathematical computations and leverages a \gls{GPU} if available.
 
-Still, single machines are reaching their limit when working with huge data sets. The solution lies in using multiple compute nodes.
+Still, single machines are reaching their limit when working with huge datasets. The solution lies in using multiple compute nodes.
 But, while existing libraries already provide excellent single node support, they do not implement distribution of the computation and data on distributed systems.
 This leaves the developer with the task of managing different nodes and distributing the data correctly on the compute nodes.
 
@@ -19,8 +19,8 @@ The \gls{HeAT} is a library developed by the Helmholtz Analytics Framework, a su
 Providing a \gls{numpy} like interface \gls{HeAT} combines \gls{PyTorch} with the \gls{MPI} to enable the developer to write his script on a single computer
 and execute it on a distributed compute cluster without worrying about the correct synchronization.
 
-Another problem arising is the tedious work of labelling the data set.
-To use data sets for classification or other machine learning purposes instance labels are needed.
+Another problem arising is the tedious work of labelling the dataset.
+To use datasets for classification or other machine learning purposes instance labels are needed.
 These labels need to be precise and are often created manually by experts.
 Due to the sheer amount of data that needs to be labelled, this process is cost and time intensive.
 
@@ -30,5 +30,5 @@ A well-known family of unsupervised algorithms are the clustering algorithms. Cl
 and splits the dataset in different clusters according to its features.
 When combined with expert knowledge this could allow to classify datasets without labelling them first.
 
-When combining these the benefits of unsupervised clustering with the benefits of using \gls{HeAT}, it allows to use huge data sets without the tedious work of labelling and with minimal development effort.
+When combining these the benefits of unsupervised clustering with the benefits of using \gls{HeAT}, it allows to use huge datasets without the tedious work of labelling and with minimal development effort.
 The goal of this paper is to evaluate the approach of using \gls{HeAT} on remote sensing data which can only be labelled by experts with a lot of manual effort.

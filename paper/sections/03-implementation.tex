@@ -4,20 +4,20 @@
 \subsection{Dataset Loading}
 \label{subsec:dataset_loading}
 The dataset is available as two \gls{HDF5} files, representing a training - validation split.
-Both parts of the dataset contain a part the Sentinel-1 and Sentinel-2 image patches as well as the labels corresponding to these images.
-To load them with \gls{HeAT} the \gls{HDF5} supports needs to be installed.
+Both parts of the dataset contain a part of the the Sentinel-1 and Sentinel-2 image patches as well as the labels corresponding to these images.
+To load them with \gls{HeAT} the \gls{HDF5} support needs to be installed.
 The training subset contains around \(350\,000\) samples.
-The implementation can be configured to load the Sentinel-1 or Sentinel-2 dataset and choose a percentage of the dataset which should be loaded.
-This allows for easier testing and profiling of the scaling behavior.
+The implementation can be configured to load the Sentinel-1 or Sentinel-2 dataset and specify a percentage of the dataset which should be loaded.
+This enables easier testing and profiling of the scaling behavior.
 
 
 \subsection{Feature Reshaping}
 \label{subsec:feature_reshaping}
-When loading the dataset the image patches are available in a shape of \[(num\_samples, channels, width, height)\]
+When loading the dataset the image patches are available in the shape of \[(num\_samples, channels, width, height)\]
 To use these in the clustering we need a feature vector for each sample instead of the nested information. Therefore,
 we aim for the shape \[(num\_samples, feature\_dim)\]
 
-Before reshaping the data is already split into batches of samples onto different nodes. Therefore, when flattening the channels of a sample, no communication should be incurred.
+Before reshaping, the data is already split into batches of samples onto different nodes. Therefore, when flattening the channels of a sample, no communication should be incurred.
 This proved to be more difficult than anticipated. The \gls{numpy} reshape function allows to specify \(-1\) for a dimension that should be automatically calculated.
 \gls{HeAT} did not have this option at the beginning of this work.
 Additionally, reshape was not optimized for operations that could occur locally and always performed communication even
@@ -56,12 +56,12 @@ compare runs with similar configuration.
 
 One has to be careful when the script crashes due to \gls{MPI} errors. Since \gls{MPI} errors are thrown
 below the Python level and the tracking runs on the Python level, there are no signs of an error when looking only at
-the tracking. This is caused by the design and cannot be circumvented. It is advisable to check runs regulary on
+the tracking. This is caused by the design and cannot be circumvented. It is advisable to check runs regularly on
 the cluster or running machine itself.
 
 \subsection{Timing}
 \label{subsec:timing}
-Only the fitting of the Spectral Clustering algorithm is timed. This is done by wrapping the fit call with a start
+Only the fitting of the spectral clustering algorithm is timed. This is done by wrapping the fit call with a start
 and end time. The prediction of labels for all elements and any plotting is performed after the time measurement.
 Every run executes the algorithm multiple times to limit the influence of start up and loading effects.
 
@@ -71,7 +71,6 @@ The bwUniCluster 2.0 was commissioned on the 17.03.2020 by the \gls{SCC} \cite{h
 It is part of the framework of the \gls{bwHPC}. In total the cluster has 848 nodes.
 The fat and high throughput compute nodes are connected via InifiBand HDR100, which has a throughput of 100 Gbit/s.
 The connection to the storage is done via InifiBand EDR.
-The cluster provides 24 compute nodes with \glspl{GPU}.
 
 Scheduling of jobs on the system is done with \gls{SLURM} \cite{yoo_slurm_2003}.
 \gls{SLURM} allows to specify the required resources for a job and schedules it for an available time slot.

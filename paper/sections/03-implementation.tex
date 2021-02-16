@@ -14,9 +14,9 @@ This enables easier testing and profiling of the scaling behavior.
 \subsection{Feature Reshaping}
 \label{subsec:feature_reshaping}
 When loading the dataset the image patches are available in the shape of \[(num\_samples, channels, width, height)\]
-To use these in the clustering we need a feature vector for each sample instead of the nested information. Therefore,
-we aim for the shape \[(num\_samples, feature\_dim)\]
-
+To use these in the clustering we need a feature vector for each sample instead of the nested information.
+Therefore, we aim for the shape
+ \[(num\_samples, feature\_dim)\]
 Before reshaping, the data is already split into batches of samples onto different nodes. Therefore, when flattening the channels of a sample, no communication should be incurred.
 This proved to be more difficult than anticipated. The \gls{numpy} reshape function allows to specify \(-1\) for a dimension that should be automatically calculated.
 \gls{HeAT} did not have this option at the beginning of this work.
@@ -30,6 +30,7 @@ For a workaround during the development time, the implementation used a custom v
 Due to the channels being in different formats, it can be useful to normalize all channels.
 Therefore, channelwise z-score normalization is implemented \cite{wooldridge_introductory_2012}:
 \[Z = \frac{X - \mu}{\sigma}\]
+with \(\mu, \sigma\) denoting the channel mean and standard deviation of the whole dataset.
 Especially when using small datasets, \(\sigma\) could be potentially \(0\) which leads to division by zero errors.
 Therefore, the normalization can be deactivated for time profiling.
 
@@ -45,7 +46,7 @@ For more information about the usage of Python logging refer to \cite{noauthor_p
 
 \subsection{Experiment Tracking}
 \label{subsec:experiment_tracking}
-All runs are tracked with WanDB \cite{noauthor_weights_nodate}. Integrating WanDB with the script was difficult due
+All runs are tracked with \gls{WANDB} \cite{noauthor_weights_nodate}. Integrating \gls{WANDB} with the script was difficult due
 to the fact that the tracking is not built for distributed systems. Therefore, only the root node should perform
 logging to the endpoint.
 Thus, only the root node loads the configuration from the disk and broadcasts the current configuration
@@ -69,8 +70,8 @@ Every run executes the algorithm multiple times to limit the influence of start 
 \label{subsec:bw_uni_cluster}
 The bwUniCluster 2.0 was commissioned on the 17.03.2020 by the \gls{SCC} \cite{haefner_kit_2020}.
 It is part of the framework of the \gls{bwHPC}. In total the cluster has 848 nodes.
-The fat and high throughput compute nodes are connected via InifiBand HDR100, which has a throughput of 100 Gbit/s.
-The connection to the storage is done via InifiBand EDR.
+The fat and high throughput compute nodes are connected via InifiBand HDR100, which has a throughput of 100 Gbit/s \cite{haefner_kit_2020}.
+The connection to the storage is done via InifiBand EDR \cite{haefner_kit_2020}.
 
 Scheduling of jobs on the system is done with \gls{SLURM} \cite{yoo_slurm_2003}.
 \gls{SLURM} allows to specify the required resources for a job and schedules it for an available time slot.

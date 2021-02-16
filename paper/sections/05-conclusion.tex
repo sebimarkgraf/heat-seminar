@@ -6,8 +6,8 @@ All calculations were performed with \gls{HeAT} on a compute cluster.
 Looking at the clustering results, the goal of learning unsupervised was not successful.
 No \glspl{LCZ} could be recognized from the found clusters.
 This result was expected as the \glspl{LCZ}  are defined manually instead of existing in the structure of the data itself.
-Another explanation could be the usage of RBF distances for image data. The machine learning world has turned to convolutional neural network
-for some years when working with image data. Pixelwise RBF or euclidean distances alone are not really able to recognize the similarity or dissimilarity
+Another explanation could be the usage of \gls{RBF} distances for image data. The machine learning world has turned to convolutional neural network
+for some years when working with image data. Pixelwise \gls{RBF} or euclidean distances alone are not really able to recognize the similarity or dissimilarity
 of the different groups and cannot find an adequate clustering.
 
 The performance of \gls{HeAT} was profiled as well.
@@ -18,8 +18,8 @@ the algorithm uses \(O(n^2)\) memory.
 Therefore, the number of compute nodes to use is limited to the bottom by the needed memory.
 Still, the strong scaling shows that the compute that comes with more nodes is more useful, than calculating the algorithm on one fat node.
 
-If more time was available the clustering results would be the next focus.
+Possible extensions could focus on the result of the clustering itself.
 With the knowledge of the good scaling behavior, a grid search with a part of the dataset could be performed.
 Especially, the gamma parameter of the radial basis function kernel and the \(\epsilon\) of an \(\epsilon\)-neighborhood graph, allow a lot of optimization.
-Another approach that was considered, but dropped due to time constraints, was the clustering on a subset of the channels.
+Another approach that could be implemented is the clustering on a subset of the channels.
 Maybe, clustering only the RGB channels or another combination could be better when keeping the curse of dimensionality in mind.

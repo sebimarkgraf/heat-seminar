@@ -21,10 +21,10 @@ Each node is assigned 90GB of \gls{RAM} and run in exclusive mode to keep the ru
 All nodes run only one \gls{MPI} process and use the \gls{PyTorch} threading.
 
 The results of the measurement can be seen in \cref{fig:strong_scaling}. As a baseline the same task was performed on one node and yielded a runtime of \(680s\).
-No run for \(2\) nodes could be run due to the message size limitation of \gls{MPI}. This is one of the current weak points
-of \gls{HeAT} that will be fixed in the future.
+No run for two nodes could be run due to the message size limitation of \gls{MPI}. This is one of the current weak points
+of \gls{HeAT} that the \gls{HeAT} plans to fix in the future.
 
-Interestingly, the first step from one to three nodes performs good, although the communication effort is added.
+Unexpectedly, the first step from one to three nodes performs good, although the communication effort is added.
 This could be due to \gls{HeAT} not being optimized for single node performance.
 The scaling continues until around ten to twelve nodes.
 From here on the computing power increases but the overhead of communication keeps the runtime consistent.
@@ -121,8 +121,8 @@ the memory was big enough to fit the distance matrix of the spectral clustering.
 with nodes from \(3\) to \(32\) with \(40\%\) of the training dataset.
 But when using nodes that are not a power of \(2\) the algorithm failed with a unknown communication error in \gls{MPI}.
 To solve this problem the \gls{MPI} implementation was changed to the OpenMPI implementation.
-Here, nodes that are not a power of two are possible, but therefore nodes below ten are limited by the message size length of \(2^{31} - 1\).
-This behavior seems to deviate from the standard message length of \(2^{31} - 1\).
+Here, nodes that are not a power of two are possible, but therefore nodes below ten are limited by the message size length of \(2^{31} - 1\) values.
+This behavior seems to deviate from the standard message length of \(2^{31} - 1\) values.
 An explanation could lie in different execution of the requested functionality by \lstinline{mpi4py}.
 \gls{HeAT} uses this Python wrapper to call \gls{MPI} functions.
 Here, more in depth investigations should be performed, but were not possible due to time constraints.

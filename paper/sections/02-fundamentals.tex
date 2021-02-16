@@ -11,7 +11,7 @@
 \subsection{Distributed Array Computation}
 \label{subsec:distributed_array_computation}
 Many scientific fields use \gls{numpy} as a basis for their calculation. Due to its implementation in the C language and its well designed
-Python interface, the computation is fast but easy to write. But, \gls{numpy} arrays are only implemented for single node use.
+Python interface, the computation is fast and easy to write. But, \gls{numpy} arrays are only implemented for single node use.
 
 Multiple libraries which allow the use of \gls{numpy} computations on multiple nodes have emerged: \cite{bauer_legate_2019}, \cite{huang_spartan_nodate}, \cite{krajsek_helmholtz_nodate}.
 Noticeably, \cite{bauer_legate_2019} adds \gls{GPU} support to speedup specific operations e.g. big matrix calculations.
@@ -25,7 +25,7 @@ This allows ease of use, but can lead to drops in performance when the user exec
 \subsection{MPI}
 \label{subec:mpi}
 \gls{MPI} is a message-passing standard published from the Message-Passing Interface Forum. It is currently available in version 3.1 \cite{message_passing_interface_forum_mpi_2015}.
-\enquote{The goal of the Message-Passing-Interface, simply stated, is to develop a widely used standard for writing message-passing programs}\cite{message_passing_interface_forum_mpi_2015}.
+\enquote{The goal of the Message-Passing-Interface \textelp{} is to develop a widely used standard for writing message-passing programs}\cite{message_passing_interface_forum_mpi_2015}.
 \gls{MPI} is today widely used in \gls{HPC}, especially in Grid Computing. The standard interface allows to pass results or data between different processes or nodes.
 Due to \gls{MPI} being a standard multiple implementations exist. Not all of the implementations are available for all systems and support all versions of the standard.
 OpenMPI \cite{noauthor_open_nodate} and Intel MPI \cite{noauthor_intel_nodate} can be cited as examples, which are used in this work.
@@ -34,7 +34,7 @@ being specified as an integer. Therefore, the maximum number of values that can 
 
 \subsection{HeAT}
 \label{subsec:heat}
-\gls{HeAT} is introduced in \cite{krajsek_helmholtz_nodate}. \gls{HeAT} is a mathematical library for distributed computations.
+\gls{HeAT}, introduced in \cite{krajsek_helmholtz_nodate} is a mathematical library for distributed computations.
 It conforms to a \gls{numpy} \cite{noauthor_numpy_nodate} interface and makes all distributed calculations transparent.
 After executing \gls{HeAT} scripts single threaded during development, executing them parallel on a cluster is done by executing the same script with \gls{MPI}.
 When used correctly, no changes to the code itself are necessary.
@@ -81,7 +81,7 @@ These guidelines allow to keep a consistent labelling and create datasets with t
 \subsection{SO2Sat}
 \label{subsec:so2sat}
 \citeauthor{zhu_so2sat_2019} presented the SO2Sat dataset in \cite{zhu_so2sat_2019}.
-They describe SO2Sat as a \enquote{valuable benchmark dataset \textelp{}, which consists of local climate zone (LCZ) labels of about half a million \textelp{} image patches}.
+They describe SO2Sat as a \enquote{valuable benchmark dataset \textelp{}, which consists of \gls{LCZ} labels of about half a million \textelp{} image patches}.
 These images from the 42 different main cities are taken from the \gls{ESA} satellites Sentinel-1 and Sentinel-2. Each image is 32 by 32 pixels and contains 8 channels for Sentinel-1 and 10 channels for Sentinel-2.
 After preprocessing these images they were given to domain experts for labelling which followed a \enquote{carefully designed labelling work flow} \cite{zhu_so2sat_2019}.
 Through the careful work the dataset achieved a \enquote{overall confidence of 85\%} \cite{zhu_so2sat_2019}.
@@ -136,7 +136,7 @@ models the width of the neighborhood.
 The k-nearest neighbor graph can be implemented in two ways. If we just use the definition of the k-nearest neighbors we would receive a directed graph.
 To convert this into an undirected graph we can decide between connecting both vertices if one of them is a k-nearest neighbor of the other or connecting them if both vertices are nearest neighbors of each other.
 The \(\epsilon\)-neighborhood graph only connects vertices whose similarity is smaller than \(\epsilon\).
-Since this option already models the neighborhood directly, it usually is considered as an unweighted graph. \cite{von_luxburg_tutorial_2007}
+Since this option already models the neighborhood directly, it usually is considered as an unweighted graph \cite{von_luxburg_tutorial_2007}.
 According to \cite{von_luxburg_tutorial_2007} there is no theoretical work on the choosing of one method over
 another.
 
@@ -172,14 +172,14 @@ The euclidean distance is a well known way to measure the distance. The euclidea
 It is fast and easy to calculate, but it is limited to  linear separation with most algorithms.
 
 \subsubsection{Radial Basis Function Kernel}
-The RBF kernel is a kernel that wraps the euclidean distance \(d\) \cite{vert_primer_2004}:
+\glspl{RBF} are a kernel that wrap the euclidean distance \(d\) \cite{vert_primer_2004}:
 \begin{align*}
   \mathop{RBF} & \left(X, X'\right) = \exp(-\gamma d(X, X'))
 \end{align*}
-Where \(\gamma\) is a free parameter. An equivalent definition uses \(\gamma = \frac{1}{2\sigma^2}\).
+Where \(\gamma\) is a free parameter. An equivalent definition uses \(\gamma = \frac{1}{2\sigma^2}\), with a free parameter \(\sigma\).
 
-The RBF kernel is a measure of similarity and augments the effects of the euclidean distance due to the exponential function.
-It allows to separate non-linear data with many algorithms.
+The \glspl{RBF} are a measure of similarity and augment the effects of the euclidean distance due to the exponential function.
+They allows to separate non-linear data with many algorithms.
 
 
 \subsection{Clustering Evaluation Metrics}
@@ -188,21 +188,22 @@ It allows to separate non-linear data with many algorithms.
 Evaluating clusters is more complicated than evaluating classification or other supervised machine learning tasks.
 Unsupervised tasks can be evaluated using internal or external metrics.
 While internal metrics, e.g. cluster purity, are derived from the result of the algorithm itself, external metrics are calculated from the comparison with given labels.
-
 Since the in \cref{subsec:so2sat} explained dataset contains labels, this section is going to focus on external metrics.
-For the here presented metrics we define \(C\) as the ground truth classes and \(K\) as the clustering assignment.
-On this basis we define the following:\\
-\(a\) - the number of pairs of elements that are in the same set in \(C\) and in the same set in \(K\)\\
-\(b\) - the number of pairs of elements that are in different sets in \(C\) and in different sets in \(K\)\\
+
 
 
 \subsubsection{Adjusted Rand Index}
-The \gls{ARI} measures the similarity of two assignments. While the raw Rand Index has problems with random assignments, the \gls{ARI} assigns a score close to \(0\)
-to random assignments.
-The raw Rand Index is mathematically given by \cite{noauthor_23_2020} as
+For the here presented metric we define \(C\) as the ground truth classes and \(K\) as the clustering assignment.
+On this basis we define the following:\\
+\(a\) - the number of pairs of elements that are in the same set in \(C\) and in the same set in \(K\)\\
+\(b\) - the number of pairs of elements that are in different sets in \(C\) and in different sets in \(K\)\\
+Then the \gls{RI} is mathematically given by \cite{noauthor_23_2020} as
 \[RI = \frac{a + b}{C_2^{n_{samples}}}\]
 When adjusting this index for random assignments we yield:
 \[ARI = \frac{RI - \mathbb{E} [RI]}{\max (RI) - \mathbb{E} [RI]}\]
+Both the \gls{ARI} and the \gls{RI} measure the similarity of two assignments.
+While the \gls{RI} has problems with random assignments, the \gls{ARI} assigns a score close to \(0\)
+to random assignments.
 
 
 \subsubsection{V-Measure}
@@ -211,7 +212,7 @@ The V-Measure was introduced by \citeauthor{rosenberg_v-measure_2007} in \cite{r
 The measurement is computed as a combination of homogenity and completeness. This allows the measurement to be explained more easily by logging homogenity and completeness additionally.
 Homogenity measures if only data points of a single class are assigned to a single cluster. Completeness is defined symmetrically to homogenity by measuring if all data points of a single class are assigned to
 a single cluster.
-When combining these two with \(\beta\) we get the V-Measure \cite{noauthor_23_2020}:
+When combining these two with a parameter \(\beta\) we get the V-Measure \cite{noauthor_23_2020}:
 \[v = \frac{(1 + \beta) \times \mathit{homogenity} \times \mathit{completeness}}{\beta \times \mathit{homogenity} + \mathit{completeness}}\]
 Depending on the value of \(\beta\) we put more weight on homogenity or completeness. The usual value of \(\beta\) is \(1.0\) which weights both components equally.
 The measurement is symmetric and bounded between \(0\) and \(1\), the later being the perfect achievable score.

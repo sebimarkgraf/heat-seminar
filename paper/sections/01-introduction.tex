@@ -11,7 +11,7 @@ as well. To optimally leverage the increase in computing power efficient algorit
 Especially, when using \glspl{GPU} this is not an easy task. To help with the task many libraries were created e.g. PyTorch.
 \gls{PyTorch} provides efficiently implemented mathematical computations and leverages a \gls{GPU} if available.
 
-Still, single machines are reaching their limit when working with huge datasets. The solution lies in using multiple compute nodes.
+Despite these improvements, single machines are reaching their limit when working with huge datasets. The solution lies in using multiple compute nodes.
 But, while existing libraries already provide excellent single node support, they do not implement distribution of the computation and data on distributed systems.
 This leaves the developer with the task of managing different nodes and distributing the data correctly on the compute nodes.
 
@@ -30,5 +30,5 @@ A well-known family of unsupervised algorithms are the clustering algorithms. Cl
 and splits the dataset in different clusters according to its features.
 When combined with expert knowledge this could allow to classify datasets without labelling them first.
 
-When combining these the benefits of unsupervised clustering with the benefits of using \gls{HeAT}, it allows to use huge datasets without the tedious work of labelling and with minimal development effort.
+When combining the benefits of unsupervised clustering with the benefits of using \gls{HeAT}, it allows to use huge datasets without the tedious work of labelling and with minimal development effort.
 The goal of this paper is to evaluate the approach of using \gls{HeAT} on remote sensing data which can only be labelled by experts with a lot of manual effort.

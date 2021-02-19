@@ -34,7 +34,7 @@ being specified as an integer. Therefore, the maximum number of values that can 
 
 \subsection{HeAT}
 \label{subsec:heat}
-\gls{HeAT}, introduced in \cite{krajsek_helmholtz_nodate} is a mathematical library for distributed computations.
+\gls{HeAT}, introduced in \cite{krajsek_helmholtz_nodate}, is a mathematical library for distributed computations.
 It conforms to a \gls{numpy} \cite{noauthor_numpy_nodate} interface and makes all distributed calculations transparent.
 After executing \gls{HeAT} scripts single threaded during development, executing them parallel on a cluster is done by executing the same script with \gls{MPI}.
 When used correctly, no changes to the code itself are necessary.
@@ -71,7 +71,7 @@ The \gls{LCZ}s are decided by 4 components:
   \item Thermal admittance of materials
 \end{enumerate}
 The different classes can be seen in \cref{fig:lcz_classes}.
-Suburban areas are complex and diverse which makes temperature and climate analysis hard to specify, therefor
+Suburban areas are complex and diverse which makes temperature and climate analysis hard to specify, therefore
 \glspl{LCZ} were introduced to get more explainable and understandable divisions of those areas.
 According to \citeauthor{stewart_local_2012}, the system fulfills all criteria of a logical local system as defined in \cite{grigg_logic_1965}.
 Their work adds guidelines on how to classify an area correctly into their zones and how to use them afterwards.
@@ -111,7 +111,7 @@ The labels consist of integers representing the 17 different \glspl{LCZ}.
 \(k\) groups based on graph theory} \cite{krajsek_helmholtz_nodate}. Therefore,
 to derive the formulation of Spectral Clustering we introduce the undirected graph \(G=(V, E)\) with nodes \(V\) and edges \(E\).
 We consider the graph as weighted by assigning each edge a weight \(w_{ij}\). As the graph
-is unidirectional, the weight is identical for \(w_{ij} = w_{ji} \).
+is undirected, the weight is identical for \(w_{ij} = w_{ji} \).
 % Degree Matrix
 We define the degree of a vertex \(v_i \in V\) by iterating over all vertices \(v_j \in V\) that are connected to \(v_i\).
 Therefore, the weight of the edge is positive:
@@ -124,7 +124,7 @@ For two subsets of indices \(A, B\) we define the weights matrix \cite{von_luxbu
 
 
 The core element of spectral clustering is a similarity graph describing the similarity between different elements of the dataset.
-There are several possible ways to construct a similarity graph fulfilling the mentioned criteria of an unidirectional graph.
+There are several possible ways to construct a similarity graph fulfilling the mentioned criteria of an undirected graph.
 The following three are used often for spectral clustering:
 \begin{itemize}
   \item fully connected
@@ -172,14 +172,14 @@ The euclidean distance is a well known way to measure the distance. The euclidea
 It is fast and easy to calculate, but it is limited to  linear separation with most algorithms.
 
 \subsubsection{Radial Basis Function Kernel}
-\glspl{RBF} are a kernel that wrap the euclidean distance \(d\) \cite{vert_primer_2004}:
+\glspl{RBF} are a kernel that wraps the euclidean distance \(d\) \cite{vert_primer_2004}:
 \begin{align*}
   \mathop{RBF} & \left(X, X'\right) = \exp(-\gamma d(X, X'))
 \end{align*}
 Where \(\gamma\) is a free parameter. An equivalent definition uses \(\gamma = \frac{1}{2\sigma^2}\), with a free parameter \(\sigma\).
 
 The \glspl{RBF} are a measure of similarity and augment the effects of the euclidean distance due to the exponential function.
-They allows to separate non-linear data with many algorithms.
+They allow to separate non-linear data with many algorithms.
 
 
 \subsection{Clustering Evaluation Metrics}
@@ -220,6 +220,7 @@ The measurement is symmetric and bounded between \(0\) and \(1\), the later bein
 
 
 \begin{figure*}
-  \includegraphics[width=0.9\linewidth]{images/strong_scaling_chart.png}
+  \centering
+  \includegraphics[width=0.9\linewidth]{images/strong_scaling_chart.pdf}
   \caption{Strong scaling behavior of the spectral clustering algorithm.}\label{fig:strong_scaling}
 \end{figure*}

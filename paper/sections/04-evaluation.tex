@@ -4,7 +4,7 @@
 
 \begin{figure*}
   \centering
-  \includegraphics[width=0.9\linewidth]{images/weak_scaling_chart.png}
+  \includegraphics[width=0.9\linewidth]{images/weak_scaling_chart.pdf}
   \caption{Weak scaling behavior of the spectral clustering algorithm.}\label{fig:weak_scaling}
 \end{figure*}
 
@@ -48,7 +48,7 @@ The results of this profiling can be seen in \cref{fig:weak_scaling}.
 In contrast to the strong scaling in \cref{subsec:strong_scaling}, the weak scaling is not optimal. If the algorithm would scale perfectly, the runtime should be a
 constant line, since the load stayed constant across all nodes. But the runtime scale could be explained as \(O(n \cdot \text{num}_{processes})\).
 This is probably due to the communication overhead when calculating the similarity matrix.
-Since the overall amount of data increases and the number of nodes increases which need to send the data between them, this seems to explain the scaling factor.
+Since both the overall amount of data and the amount of nodes, which need to send the data between them, the scaling of the algorithm could have been expected.
 
 \subsection{Clustering Results}
 \label{subsec:clustering_results}
@@ -106,7 +106,7 @@ Therefore, one could observe negative eigenvalues in this case, despite the lapl
 Furthermore, spectral clustering has problems with high-dimensional data. This could be changed by using another approach, a specific version of spectral clustering
 or do feature extraction before clustering. Possible features could be channel-wise mean, deviation, maximum and minimum.
 
-\subsection{Problems when using HeAT}
+\subsection{Problems When Using HeAT}
 \label{subsec:problems_when_using_heat}
 During the implementation of this project and the runs many problems arose.
 One of the problems was in the \(reshape\) function of \gls{HeAT}.
@@ -125,4 +125,4 @@ Here, nodes that are not a power of two are possible, but therefore nodes below 
 This behavior seems to deviate from the standard message length of \(2^{31} - 1\) values.
 An explanation could lie in different execution of the requested functionality by \lstinline{mpi4py}.
 \gls{HeAT} uses this Python wrapper to call \gls{MPI} functions.
-Here, more in depth investigations should be performed, but were not possible due to time constraints.
+Here, more in depth investigations could be performed in future work.

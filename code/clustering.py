@@ -1,7 +1,5 @@
 import logging
-import math
 import os
-import random
 import time
 from functools import wraps
 from typing import Tuple
@@ -9,8 +7,6 @@ from typing import Tuple
 import heat as ht
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
-import torch
 import wandb
 from flatten import heat_flatten
 from mpi4py import MPI
